@@ -2,14 +2,13 @@
 #include "BaseObject.h"
 #include "MainObject.h"
 #include "SkillObject.h"
+#include "EnemyObject.h"
 
 using namespace std;
-extern SDL_Renderer* gRenderer;
 MainObject gPlayer;
-
-
 BaseObject gBackground;
 std::vector <Point> points;
+std::vector <EnemyObject> enemies;
 bool loadMedia()
 {
     bool success = true;
@@ -28,7 +27,6 @@ int main(int argc, char* argv[])
     //Căn chỉnh FPS
     ImpTimer fps_timer;
     if (!InitData()) return -1;
-
     if (!loadMedia()) return -1;
  
     
@@ -66,6 +64,9 @@ int main(int argc, char* argv[])
                 gPlayer.set_clips(WAITING_ANIMATION_FRAMES);
                 if (isHorizontalLine(points)) //Nhận diện đường thẳng ngang
                 {
+                    gPlayer.loadFromFile("assets/horizontal.png");
+                    gPlayer.set_clips(HORIZONTAL_ANIMATION_FRAMES);
+                    gPlayer.skill();
                     cout << "ĐƯỜNG NGANG" << endl;
                 } else if (isVLine(points)) //Nhận diện chữ V
                 {
@@ -76,6 +77,9 @@ int main(int argc, char* argv[])
                     cout << "CHỮ V" << endl;
                 } else if (isVerticalLine(points)) //Nhận diện đường thẳng dọc
                 {
+                    gPlayer.loadFromFile("assets/vertical.png");
+                    gPlayer.set_clips(VERTICAL_ANIMATION_FRAMES);
+                    gPlayer.skill();
                     cout << "ĐƯỜNG DỌC" << endl;
                 } else //Không nhận gì
                 {
@@ -95,7 +99,6 @@ int main(int argc, char* argv[])
         SDL_RenderClear(gRenderer);
         //Vẽ background full màn hình
         gBackground.render(0, 0, NULL);
-
         //Render skill
         if (points.size() > 3)
         {
@@ -103,7 +106,7 @@ int main(int argc, char* argv[])
         }
         //Vẽ nhân vật
         gPlayer.show();
-
+        spawnEnemy(enemies);
         //Cập nhật khung hình mới lên màn hình
         SDL_RenderPresent(gRenderer);
 

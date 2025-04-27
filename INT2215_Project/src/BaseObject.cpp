@@ -1,4 +1,3 @@
-#include "GameBase.h"
 #include "BaseObject.h"
 
 BaseObject::BaseObject()

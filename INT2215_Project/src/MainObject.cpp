@@ -1,6 +1,4 @@
-#include "BaseObject.h"
 #include "MainObject.h"
-#include "GameBase.h"
 
 MainObject::MainObject()
 {
@@ -22,7 +20,7 @@ void MainObject::set_clips(int s)
     std::cout << "mWidth: " << mWidth << " mHeight: " << mHeight << std::endl;
     if (mWidth > 0 && mHeight > 0)
     {
-        for (int i = 0; i < 11; i++)
+        for (int i = 0; i < s; i++)
         {
             gSpriteClips[i].x = i * mWidth;
             gSpriteClips[i].y = 0;
@@ -46,7 +44,7 @@ void MainObject::show()
     SDL_Rect renderQuad = {(SCREEN_WIDTH - mWidth)/2, (SCREEN_HEIGHT - mHeight)/2, mWidth, mHeight};
     SDL_RenderCopy(gRenderer, mTexture, &gSpriteClips[frame_], &renderQuad);
     Uint32 current_time = SDL_GetTicks();
-    if (current_time > last_frame_time_ + 100) // 100ms mới đổi frame 1 lần (10 fps)
+    if (current_time > last_frame_time_ + 120) // 100ms mới đổi frame 1 lần (10 fps)
     {
         if (status_ == WAITING || status_ == DRAWING)
         {
@@ -65,3 +63,5 @@ void MainObject::show()
         last_frame_time_ = current_time;
     }
 }
+
+

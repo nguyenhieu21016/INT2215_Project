@@ -17,14 +17,6 @@ const int SCREEN_BPP = 32;
 const int FRAME_CHARACTER_WIDTH = 190;
 const int FRAME_CHARACTER_HEIGHT = 170;
 
-const int COLOR_KEY_R = 167;
-const int COLOR_KEY_G = 175;
-const int COLOR_KEY_B = 180;
-
-struct Input{
-    int left_;
-    int right_;
-};
 
 //Base
 void close();
