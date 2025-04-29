@@ -7,7 +7,6 @@ bool isVLine(const std::vector<Point>& points)
     {
         int x1 = points.front().x, y1 = points.front().y;
         int x2 = points.back().x , y2 = points.back().y;
-        //Tính đường thẳng y = ax+b đi qua 2 điểm đầu cuối
         double a = (y1 - y2)/(x1 - x2);
         double b = y1 - a*x1;
         if (abs(a) > 1/4)
@@ -32,7 +31,6 @@ bool isHorizontalLine(const std::vector<Point>& points)
     {
         int x1 = points.front().x, y1 = points.front().y;
         int x2 = points.back().x , y2 = points.back().y;
-        //Tính đường thẳng y = ax+b đi qua 2 điểm đầu cuối
         double a = (y1 - y2)/(x1 - x2);
         double b = y1 - a*x1;
         if (abs(a) > 0.176)
@@ -53,14 +51,12 @@ bool isHorizontalLine(const std::vector<Point>& points)
     }
     return true;
 }
-
 bool isVerticalLine(const std::vector<Point>& points)
 {
     if (points.size() > 3)
     {
         int x1 = points.front().x, y1 = points.front().y;
         int x2 = points.back().x , y2 = points.back().y;
-        //Tính đường thẳng y = ax+b đi qua 2 điểm đầu cuối
         double a = (y1 - y2)/(x1 - x2);
         double b = y1 - a*x1;
         if (abs(a) > 5.76)
@@ -78,6 +74,23 @@ bool isVerticalLine(const std::vector<Point>& points)
     } else
     {
         return false;
+    }
+    return true;
+}
+bool isLightningLine(const std::vector<Point>& points)
+{
+    if (points.size() > 3)
+    {
+        int x1 = points.front().x, y1 = points.front().y;
+        int x2 = points.front().x, y2 = points.front().x;
+        double a = (y1-y2)/(x1-x2);
+        double b = y1 - a*x1;
+        Point point14 = points[points.size()/4];
+        Point point34 = points[points.size()*3/4];
+        if ((a*point14.x-point14.y+b)*(a*point34.x-point34.y+b)<0)
+        {
+            return false;
+        }
     }
     return true;
 }
