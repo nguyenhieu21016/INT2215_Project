@@ -7,36 +7,56 @@
 using namespace std;
 MainObject gPlayer;
 BaseObject gBackground;
+BaseObject gWaiting;
+BaseObject gSunken;
+BaseObject gVertical;
+BaseObject gDrawing;
+SDL_Texture* tWaiting;
+SDL_Texture* tDrawing;
+SDL_Texture* tSunken;
 std::vector <Point> points;
 std::vector <EnemyObject> enemies;
+
 bool loadMedia()
 {
     bool success = true;
-    
     if (!gBackground.loadFromFile("assets/background.png"))
     {
         success = false;
     }
-    
+    if (!gWaiting.loadFromFile("assets/waiting.png"))
+    {
+        success = false;
+    } else
+    {
+        tWaiting = gWaiting.getTexture();
+    }
+    if (!gDrawing.loadFromFile("assets/drawing.png"))
+    {
+        success = false;
+    } else
+    {
+        tDrawing = gDrawing.getTexture();
+    }
+    if (!gSunken.loadFromFile("assets/drawing.png"))
+    {
+        success = false;
+    } else
+    {
+        tSunken = gSunken.getTexture();
+    }
     return success;
 }
-
-
 int main(int argc, char* argv[])
 {
     //Căn chỉnh FPS
     ImpTimer fps_timer;
     if (!InitData()) return -1;
     if (!loadMedia()) return -1;
- 
-    
-    bool drawing = false;
+    bool drawingMode = false;
     bool isRunning = true;
-
     gPlayer.loadFromFile("assets/waiting.png");
-    gPlayer.waiting();
     gPlayer.set_clips(WAITING_ANIMATION_FRAMES);
-    
     //Vòng lặp chính
     while (isRunning)
     {
@@ -52,64 +72,77 @@ int main(int argc, char* argv[])
                 //Xoá hết bảng point cũ
                 points.clear();
                 //Bật chế độ vẽ
-                drawing = true;
+                drawingMode = true;
                 gPlayer.loadFromFile("assets/drawing.png");
-                
                 gPlayer.set_clips(DRAWING_ANIMATION_FRAMES);
             } else if (gEvent.type == SDL_MOUSEBUTTONUP)
             {
-                //Tắt chế độ vẽ
-                drawing = false;
-                gPlayer.loadFromFile("assets/waiting.png");
+                drawingMode = false;
+                gPlayer.setTexture(tWaiting);
                 gPlayer.set_clips(WAITING_ANIMATION_FRAMES);
-                if (isHorizontalLine(points)) //Nhận diện đường thẳng ngang
+                if (isHorizontalLine(points))
                 {
                     gPlayer.loadFromFile("assets/horizontal.png");
                     gPlayer.set_clips(HORIZONTAL_ANIMATION_FRAMES);
                     gPlayer.skill();
                     cout << "ĐƯỜNG NGANG" << endl;
-                } else if (isVLine(points)) //Nhận diện chữ V
+                } else if (isHeartLine(points))
                 {
-    
+                    gPlayer.loadFromFile("assets/heart.png");
+                    gPlayer.set_clips(HEART_ANIMATION_FRAMES);
+                    gPlayer.skill();
+                    cout << "ĐƯỜNG TRÁI TIM" << endl;
+                } else if (isVLine(points))
+                {
                     gPlayer.loadFromFile("assets/sunken.png");
                     gPlayer.set_clips(SUNKEN_ANIMATION_FRAMES);
                     gPlayer.skill();
                     cout << "CHỮ V" << endl;
-                } else if (isVerticalLine(points)) //Nhận diện đường thẳng dọc
+                } else if (isVerticalLine(points))
                 {
                     gPlayer.loadFromFile("assets/vertical.png");
                     gPlayer.set_clips(VERTICAL_ANIMATION_FRAMES);
                     gPlayer.skill();
                     cout << "ĐƯỜNG DỌC" << endl;
-                } else //Không nhận gì
+                } else if (isLightningLine(points))
+                {
+                    gPlayer.loadFromFile("assets/lightning.png");
+                    gPlayer.set_clips(LIGHTNING_ANIMATION_FRAMES);
+                    gPlayer.skill();
+                    cout << "ĐƯỜNG SÉT" << endl;
+                } else
                 {
                     cout << "ĐÉO CÓ GÌ" << endl;
+                    gPlayer.setTexture(tWaiting);
+                    gPlayer.set_clips(WAITING_ANIMATION_FRAMES);
                 }
-            } else if (gEvent.type == SDL_MOUSEMOTION && drawing)
+            } else if (gEvent.type == SDL_MOUSEMOTION && drawingMode)
             {
+                
                 //Đẩy toạ độ hiện tại của chuột vào vector points
                 points.push_back({gEvent.motion.x, gEvent.motion.y});
                 //In ra toạ độ hiện tại của chuột
                 cout << gEvent.motion.x << " " << gEvent.motion.y << endl;
             }
         }
-        //Vẽ lên màn hình
         //Xoá màn hình với màu trắng
         SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
         SDL_RenderClear(gRenderer);
         //Vẽ background full màn hình
         gBackground.render(0, 0, NULL);
         //Render skill
-        if (points.size() > 3)
-        {
-            //gSkill.render(SCREEN_WIDTH/2 - 100, SCREEN_HEIGHT/2 - 100, 200, 200, NULL);
-        }
         //Vẽ nhân vật
+        if (points.size()>1)
+        {
+            for (size_t i = 1; i < points.size(); ++i)
+            {
+                SDL_RenderDrawLine(gRenderer, points[i-1].x, points[i-1].y, points[i].x, points[i].y);
+            }
+        }
         gPlayer.show();
-        spawnEnemy(enemies);
+        //spawnEnemy(enemies);
         //Cập nhật khung hình mới lên màn hình
         SDL_RenderPresent(gRenderer);
-
         //Căn chỉnh FPS
         int real_time = fps_timer.get_ticks();
         int time_one_frame = 1000 / FRAME_PER_SECOND;
