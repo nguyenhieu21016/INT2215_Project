@@ -22,54 +22,33 @@ SDL_Texture* tHorizontal;
 std::vector <Point> points;
 std::vector <EnemyObject> enemies;
 
+struct LoadAsset {
+    BaseObject* object;
+    const char* path;
+    SDL_Texture** texturePtr;
+};
+std::vector <LoadAsset> assets = {
+    { &gBackground, "assets/background.png", NULL},
+    { &gWaiting, "assets/waiting.png", &tWaiting},
+    { &gDrawing, "assets/drawing.png", &tDrawing},
+    { &gSunken, "assets/sunken.png", &tSunken},
+    { &gVertical, "assets/vertical.png", &tVertical},
+    { &gLightning, "assets/lightning.png", &tLightning},
+    { &gHorizontal, "assets/horizontal.png", &tHorizontal}
+};
+
 bool loadMedia()
 {
     bool success = true;
-    if (!gBackground.loadFromFile("assets/background.png"))
+    for (const auto& asset : assets)
     {
-        success = false;
-    }
-    if (!gWaiting.loadFromFile("assets/waiting.png"))
-    {
-        success = false;
-    } else
-    {
-        tWaiting = gWaiting.getTexture();
-    }
-    if (!gDrawing.loadFromFile("assets/drawing.png"))
-    {
-        success = false;
-    } else
-    {
-        tDrawing = gDrawing.getTexture();
-    }
-    if (!gSunken.loadFromFile("assets/sunken.png"))
-    {
-        success = false;
-    } else
-    {
-        tSunken = gSunken.getTexture();
-    }
-    if (!gHorizontal.loadFromFile("assets/horizontal.png"))
-    {
-        success = false;
-    } else
-    {
-        tHorizontal = gHorizontal.getTexture();
-    }
-    if (!gLightning.loadFromFile("assets/lightning.png"))
-    {
-        success = false;
-    } else
-    {
-        tLightning = gLightning.getTexture();
-    }
-    if (!gVertical.loadFromFile("assets/vertical.png"))
-    {
-        success = false;
-    } else
-    {
-        tVertical = gVertical.getTexture();
+        if (!asset.object->loadFromFile(asset.path))
+        {
+            success = false;
+        } else if (asset.texturePtr)
+        {
+            *asset.texturePtr = asset.object->getTexture();
+        }
     }
     return success;
 }
@@ -149,7 +128,6 @@ int main(int argc, char* argv[])
                 
                 //Đẩy toạ độ hiện tại của chuột vào vector points
                 points.push_back({gEvent.motion.x, gEvent.motion.y});
-                //In ra toạ độ hiện tại của chuột
                 cout << gEvent.motion.x << " " << gEvent.motion.y << endl;
             }
         }

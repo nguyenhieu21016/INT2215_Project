@@ -40,7 +40,7 @@ void MainObject::show()
     SDL_Rect renderQuad = {(SCREEN_WIDTH - mWidth)/2, (SCREEN_HEIGHT - mHeight)/2, mWidth, mHeight};
     SDL_RenderCopy(gRenderer, mTexture, &gSpriteClips[frame_], &renderQuad);
     Uint32 current_time = SDL_GetTicks();
-    if (current_time > last_frame_time_ + 120) // 100ms mới đổi frame 1 lần (10 fps)
+    if (current_time > last_frame_time_ + 150) // 100ms mới đổi frame 1 lần (10 fps)
     {
         if (status_ == WAITING || status_ == DRAWING)
         {
