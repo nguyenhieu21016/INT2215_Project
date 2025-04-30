@@ -10,3 +10,4 @@ bool isVLine(const std::vector<Point>& points);
 bool isHorizontalLine(const std::vector<Point>& points);
 bool isVerticalLine(const std::vector<Point>& points);
 bool isLightningLine(const std::vector<Point>& points);
+bool isHeartLine(const std::vector<Point>& points);

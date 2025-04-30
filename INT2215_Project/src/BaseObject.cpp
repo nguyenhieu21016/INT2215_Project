@@ -14,8 +14,7 @@ BaseObject::~BaseObject()
 
 bool BaseObject::loadFromFile(std::string path)
 {
-    free(); 
-
+    free();
     SDL_Texture* newTexture = NULL;
     SDL_Surface* loadedSurface = IMG_Load(path.c_str());
     if (loadedSurface == NULL)
@@ -30,11 +29,9 @@ bool BaseObject::loadFromFile(std::string path)
             mWidth = loadedSurface->w;
             mHeight = loadedSurface->h;
         }
-        SDL_FreeSurface(loadedSurface); // giải phóng surface sau khi dùng xong
+        SDL_FreeSurface(loadedSurface);
     }
-    
     mTexture = newTexture;
-    std::cout << "mWidth: " << mWidth << " mHeight: " << mHeight << std::endl;
     return (mTexture != NULL);
 }
 
@@ -46,7 +43,6 @@ void BaseObject::render(int x, int y, const SDL_Rect* clip)
             return;
         }
     SDL_Rect renderQuad = {x, y, mWidth, mHeight};
-    
     //Vẽ texture tại vị trí renderquad
     SDL_RenderCopy(gRenderer, mTexture, clip, &renderQuad);
 }
@@ -61,7 +57,14 @@ void BaseObject::free()
         mHeight = 0;
     }
 }
-
+void BaseObject::setTexture(SDL_Texture* textureToRender)
+{
+    mTexture = textureToRender;
+    if (mTexture != NULL)
+    {
+        SDL_QueryTexture(mTexture, NULL, NULL, &mWidth, &mHeight);
+    }
+}
 int BaseObject::getWidth()
 {
     return mWidth;
@@ -69,4 +72,8 @@ int BaseObject::getWidth()
 int BaseObject::getHeight()
 {
     return mHeight;
+}
+SDL_Texture* BaseObject::getTexture()
+{
+    return mTexture;
 }

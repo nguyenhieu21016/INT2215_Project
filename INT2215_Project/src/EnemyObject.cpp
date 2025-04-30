@@ -1,5 +1,27 @@
 #include "EnemyObject.h"
 
+/*BaseObject sLightning;
+BaseObject sHorizontal;
+BaseObject sSunken;
+BaseObject sVertical;
+SDL_Texture* tsSunken;
+SDL_Texture* tsVertical;
+SDL_Texture* tsLightning;
+SDL_Texture* tsHorizontal;
+
+
+struct LoadAsset {
+    BaseObject* object;
+    const char* path;
+    SDL_Texture** texturePtr;
+};
+std::vector <LoadAsset> assets = {
+    { &sSunken, "assets/symbols/sSunken.png", &tsSunken},
+    { &sVertical, "assets/symbols/sVertical.png", &tsVertical},
+    { &sLightning, "assets/symbols/sLightning.png", &tsLightning},
+    { &sHorizontal, "assets/symbols/sHorizontal.png", &tsHorizontal}
+};*/
+
 EnemyObject::EnemyObject(int x0, int y0, std::vector <char> skills)
 {
     xpos = x0;

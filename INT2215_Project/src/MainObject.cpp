@@ -60,14 +60,6 @@ void MainObject::show()
         last_frame_time_ = current_time;
     }
 }
-void MainObject::setTexture(SDL_Texture* textureToRender)
-{
-    mTexture = textureToRender;
-    if (mTexture != NULL)
-    {
-        SDL_QueryTexture(mTexture, NULL, NULL, &mWidth, &mHeight);
-    }
-}
 void MainObject::setWaitingTexture(SDL_Texture* textureToLoad)
 {
     waitingTexture = textureToLoad;

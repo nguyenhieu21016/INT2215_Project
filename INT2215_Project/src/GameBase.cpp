@@ -21,10 +21,8 @@ bool InitData()
     {
         return false;
     }
-    
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-    
-    gWindow = SDL_CreateWindow("INT2215_Project", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    gWindow = SDL_CreateWindow("Feline Frights", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (gWindow == NULL)
     {
         success = false;
@@ -43,7 +41,6 @@ bool InitData()
             }
         }
     }
-    
     return success;
 }
 
