@@ -91,7 +91,27 @@ bool isLightningLine(const std::vector<Point>& points)
         {
             return false;
         }
+    } else
+    {
+        return false;
     }
     return true;
+}
+bool isHeartLine(const std::vector<Point>& points)
+{
+    if (points.size() > 3)
+    {
+        int x1 = points.front().x, y1 = points.front().y;
+        int x2 = points[points.size()/2].x, y2 = points[points.size()/2].y;
+        double a = (y1-y2)/(x1-x2);
+        double b = y1 - a*x1;
+        Point point14 = points[points.size()/4];
+        Point point34 = points[points.size()*3/4];
+        if ((a*point14.x-point14.y+b)*(a*point34.x-point34.y+b)<0)
+        {
+            return false;
+        }
+    }
+    return false;
 }
 

@@ -23,7 +23,6 @@ public:
     void set_clips(int s);
     void loop();
     void skill();
-    void setTexture(SDL_Texture* textureToRender);
     void setWaitingTexture(SDL_Texture* textureToLoad);
 private:
     SDL_Rect gSpriteClips[20];

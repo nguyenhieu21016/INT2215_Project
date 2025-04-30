@@ -14,10 +14,11 @@ public:
     void render(int x, int y, const SDL_Rect* clip);
     //Hàm giải phóng bộ nhớ
     void free();
-    
     //Hàm trả
     int getWidth();
     int getHeight();
+    SDL_Texture* getTexture();
+    void setTexture(SDL_Texture* textureToLoad);
 private:
 
 protected:

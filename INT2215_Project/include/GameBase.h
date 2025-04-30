@@ -10,18 +10,21 @@ extern SDL_Renderer* gRenderer;
 static SDL_Event gEvent;
 
 //Screen
-const int FRAME_PER_SECOND = 60;
+const int FRAME_PER_SECOND = 24;
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 const int SCREEN_BPP = 32;
 const int FRAME_CHARACTER_WIDTH = 190;
 const int FRAME_CHARACTER_HEIGHT = 170;
 
-
 //Base
 void close();
 bool InitData();
-
+enum Animation
+{
+    RUNNING, SCARED, WAITING, DRAWING, HEART,
+    SUNKEN, HURT, DIE, VICTORY,
+};
 //Xử lí FPS
 class ImpTimer
 {
