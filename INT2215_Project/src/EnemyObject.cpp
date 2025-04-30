@@ -11,17 +11,24 @@ EnemyObject::~EnemyObject()
 {
 }
 Uint32 lastSpawnTime = 0;
-void spawnEnemy(std::vector <EnemyObject> enemies)
+void spawnEnemy(std::vector <EnemyObject>& enemies)
 {
     if (SDL_GetTicks() > lastSpawnTime + 3000)
     {
-        int x = rand() % SCREEN_WIDTH;
-        int y = rand() % SCREEN_HEIGHT;
+        int y = rand() % 571 + 1;
+        int x = (rand() % 2 == 0) ? 0 : 1130;
         std::vector<char> skills = generateRandomSkill();
-        enemies.push_back(EnemyObject(x, y, skills));
-        std::cout << x << " " << y << std::endl;
+        EnemyObject newEnemy(x, y, skills);
+        enemies.push_back(newEnemy);
+        std::cout << "Spawn : " << x << " " << y << std::endl;
         lastSpawnTime = SDL_GetTicks();
+
     }
+}
+void EnemyObject::show(int x, int y, SDL_Texture* enemyTexture)
+{
+    SDL_Rect renderQuad = {x, y, 150, 150};
+    SDL_RenderCopy(gRenderer, enemyTexture, NULL, &renderQuad);
 }
 std::vector <char> generateRandomSkill() {
     std::vector <char> skillSymbols = {'-', '|', 'v'};

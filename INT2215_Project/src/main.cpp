@@ -13,12 +13,16 @@ BaseObject gVertical;
 BaseObject gDrawing;
 BaseObject gLightning;
 BaseObject gHorizontal;
+BaseObject gEnemyLeft;
+BaseObject gEnemyRight;
 SDL_Texture* tWaiting;
 SDL_Texture* tDrawing;
 SDL_Texture* tSunken;
 SDL_Texture* tVertical;
 SDL_Texture* tLightning;
 SDL_Texture* tHorizontal;
+SDL_Texture* tEnemyLeft;
+SDL_Texture* tEnemyRight;
 std::vector <Point> points;
 std::vector <EnemyObject> enemies;
 
@@ -34,7 +38,9 @@ std::vector <LoadAsset> assets = {
     { &gSunken, "assets/sunken.png", &tSunken},
     { &gVertical, "assets/vertical.png", &tVertical},
     { &gLightning, "assets/lightning.png", &tLightning},
-    { &gHorizontal, "assets/horizontal.png", &tHorizontal}
+    { &gHorizontal, "assets/horizontal.png", &tHorizontal},
+    { &gEnemyLeft, "assets/ghost_normal_left.png", &tEnemyLeft},
+    { &gEnemyRight, "assets/ghost_normal_right.png", &tEnemyRight}
 };
 
 bool loadMedia()
@@ -107,7 +113,7 @@ int main(int argc, char* argv[])
                     cout << "CHỮ V" << endl;
                 } else if (isVerticalLine(points))
                 {
-                    gPlayer.loadFromFile("assets/vertical.png");
+                    gPlayer.setTexture(tVertical);
                     gPlayer.set_clips(VERTICAL_ANIMATION_FRAMES);
                     gPlayer.skill();
                     cout << "ĐƯỜNG DỌC" << endl;
@@ -146,7 +152,18 @@ int main(int argc, char* argv[])
             }
         }
         gPlayer.show();
-        //spawnEnemy(enemies);
+        spawnEnemy(enemies);
+        for (EnemyObject enemy : enemies)
+        {
+            if (enemy.xpos == 0)
+            {
+                enemy.show(enemy.xpos, enemy.ypos, tEnemyLeft);
+            } else
+            {
+                enemy.show(enemy.xpos, enemy.ypos, tEnemyRight);
+            }
+            
+        }
         //Cập nhật khung hình mới lên màn hình
         SDL_RenderPresent(gRenderer);
         //Căn chỉnh FPS
