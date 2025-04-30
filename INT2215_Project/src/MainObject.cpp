@@ -8,16 +8,13 @@ MainObject::MainObject()
     status_ = -1;
 
 }
-
 MainObject::~MainObject()
 {
     free();
 }
-
 void MainObject::set_clips(int s)
 {
     mWidth = mWidth / s;
-    std::cout << "mWidth: " << mWidth << " mHeight: " << mHeight << std::endl;
     if (mWidth > 0 && mHeight > 0)
     {
         for (int i = 0; i < s; i++)
@@ -30,7 +27,7 @@ void MainObject::set_clips(int s)
     }
     total_frames_ = s;
 }
-void MainObject::waiting()
+void MainObject::loop()
 {
     status_ = WAITING;
 }
@@ -38,7 +35,6 @@ void MainObject::skill()
 {
     status_ = -1;
 }
-
 void MainObject::show()
 {
     SDL_Rect renderQuad = {(SCREEN_WIDTH - mWidth)/2, (SCREEN_HEIGHT - mHeight)/2, mWidth, mHeight};
@@ -55,13 +51,24 @@ void MainObject::show()
             frame_ += 1;
             if (frame_ >= total_frames_)
             {
+                frame_ = 0;
                 status_ = WAITING;
-                loadFromFile("assets/waiting.png");
+                setTexture(waitingTexture);
                 set_clips(WAITING_ANIMATION_FRAMES);
             }
         }
         last_frame_time_ = current_time;
     }
 }
-
-
+void MainObject::setTexture(SDL_Texture* textureToRender)
+{
+    mTexture = textureToRender;
+    if (mTexture != NULL)
+    {
+        SDL_QueryTexture(mTexture, NULL, NULL, &mWidth, &mHeight);
+    }
+}
+void MainObject::setWaitingTexture(SDL_Texture* textureToLoad)
+{
+    waitingTexture = textureToLoad;
+}

@@ -11,9 +11,14 @@ BaseObject gWaiting;
 BaseObject gSunken;
 BaseObject gVertical;
 BaseObject gDrawing;
+BaseObject gLightning;
+BaseObject gHorizontal;
 SDL_Texture* tWaiting;
 SDL_Texture* tDrawing;
 SDL_Texture* tSunken;
+SDL_Texture* tVertical;
+SDL_Texture* tLightning;
+SDL_Texture* tHorizontal;
 std::vector <Point> points;
 std::vector <EnemyObject> enemies;
 
@@ -38,12 +43,33 @@ bool loadMedia()
     {
         tDrawing = gDrawing.getTexture();
     }
-    if (!gSunken.loadFromFile("assets/drawing.png"))
+    if (!gSunken.loadFromFile("assets/sunken.png"))
     {
         success = false;
     } else
     {
         tSunken = gSunken.getTexture();
+    }
+    if (!gHorizontal.loadFromFile("assets/horizontal.png"))
+    {
+        success = false;
+    } else
+    {
+        tHorizontal = gHorizontal.getTexture();
+    }
+    if (!gLightning.loadFromFile("assets/lightning.png"))
+    {
+        success = false;
+    } else
+    {
+        tLightning = gLightning.getTexture();
+    }
+    if (!gVertical.loadFromFile("assets/vertical.png"))
+    {
+        success = false;
+    } else
+    {
+        tVertical = gVertical.getTexture();
     }
     return success;
 }
@@ -55,7 +81,8 @@ int main(int argc, char* argv[])
     if (!loadMedia()) return -1;
     bool drawingMode = false;
     bool isRunning = true;
-    gPlayer.loadFromFile("assets/waiting.png");
+    gPlayer.setWaitingTexture(tWaiting);
+    gPlayer.setTexture(tWaiting);
     gPlayer.set_clips(WAITING_ANIMATION_FRAMES);
     //Vòng lặp chính
     while (isRunning)
@@ -73,8 +100,9 @@ int main(int argc, char* argv[])
                 points.clear();
                 //Bật chế độ vẽ
                 drawingMode = true;
-                gPlayer.loadFromFile("assets/drawing.png");
+                gPlayer.setTexture(tDrawing);
                 gPlayer.set_clips(DRAWING_ANIMATION_FRAMES);
+                gPlayer.loop();
             } else if (gEvent.type == SDL_MOUSEBUTTONUP)
             {
                 drawingMode = false;
@@ -82,7 +110,7 @@ int main(int argc, char* argv[])
                 gPlayer.set_clips(WAITING_ANIMATION_FRAMES);
                 if (isHorizontalLine(points))
                 {
-                    gPlayer.loadFromFile("assets/horizontal.png");
+                    gPlayer.setTexture(tHorizontal);
                     gPlayer.set_clips(HORIZONTAL_ANIMATION_FRAMES);
                     gPlayer.skill();
                     cout << "ĐƯỜNG NGANG" << endl;
@@ -94,7 +122,7 @@ int main(int argc, char* argv[])
                     cout << "ĐƯỜNG TRÁI TIM" << endl;
                 } else if (isVLine(points))
                 {
-                    gPlayer.loadFromFile("assets/sunken.png");
+                    gPlayer.setTexture(tSunken);
                     gPlayer.set_clips(SUNKEN_ANIMATION_FRAMES);
                     gPlayer.skill();
                     cout << "CHỮ V" << endl;
@@ -106,7 +134,7 @@ int main(int argc, char* argv[])
                     cout << "ĐƯỜNG DỌC" << endl;
                 } else if (isLightningLine(points))
                 {
-                    gPlayer.loadFromFile("assets/lightning.png");
+                    gPlayer.setTexture(tLightning);
                     gPlayer.set_clips(LIGHTNING_ANIMATION_FRAMES);
                     gPlayer.skill();
                     cout << "ĐƯỜNG SÉT" << endl;
