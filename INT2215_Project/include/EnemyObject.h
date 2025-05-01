@@ -13,7 +13,8 @@ public:
     int ypos;
     std::vector <char> skillQueue;
     bool isDying;
-    void show(int& x, int& y, SDL_Texture* enemyTexture, std::vector <SDL_Texture*> skillTexture);
+    bool isHurt;
+    void show(int& x, int& y, SDL_Texture* enemyTexture, std::vector <SDL_Texture*> skillTexture, SDL_Texture* tex);
 private :
 };
 void enemyLive(std::vector <EnemyObject>& enemies, Mix_Chunk* dead, SDL_Texture* tex);

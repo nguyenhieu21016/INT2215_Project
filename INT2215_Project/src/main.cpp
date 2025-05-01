@@ -20,6 +20,7 @@ BaseObject sHorizontal;
 BaseObject sSunken;
 BaseObject sVertical;
 BaseObject sEnemyDieRight;
+BaseObject sEnemyHurtRight;
 SDL_Texture* tsSunken;
 SDL_Texture* tsVertical;
 SDL_Texture* tsLightning;
@@ -33,6 +34,7 @@ SDL_Texture* tHorizontal;
 SDL_Texture* tEnemyLeft;
 SDL_Texture* tEnemyRight;
 SDL_Texture* tEnemyDỉeRight;
+SDL_Texture* tEnemyHurtRight;
 std::vector <Point> points;
 std::vector <EnemyObject> enemies;
 std::vector <SDL_Texture*> skillTexture;
@@ -56,7 +58,8 @@ std::vector <LoadAsset> assets = {
     { &sVertical, "assets/symbols/sVertical.png", &tsVertical},
     { &sLightning, "assets/symbols/sLightning.png", &tsLightning},
     { &sHorizontal, "assets/symbols/sHorizontal.png", &tsHorizontal},
-    { &sEnemyDieRight, "assets/ghost_die_right.png", &tEnemyDỉeRight}
+    { &sEnemyDieRight, "assets/ghost_die_right.png", &tEnemyDỉeRight},
+    { &sEnemyHurtRight, "assets/ghost_hurt_right.png", &tEnemyHurtRight}
 };
 
 bool loadMedia()
@@ -209,10 +212,10 @@ int main(int argc, char* argv[])
         {
             if (enemy.xpos < SCREEN_WIDTH/2)
             {
-                enemy.show(enemy.xpos, enemy.ypos, tEnemyLeft, skillTexture);
+                enemy.show(enemy.xpos, enemy.ypos, tEnemyLeft, skillTexture, tEnemyHurtRight);
             } else
             {
-                enemy.show(enemy.xpos, enemy.ypos, tEnemyRight, skillTexture);
+                enemy.show(enemy.xpos, enemy.ypos, tEnemyRight, skillTexture, tEnemyHurtRight);
             }
             
         }

@@ -7,6 +7,7 @@ EnemyObject::EnemyObject(int x0, int y0, std::vector <char> skills)
     ypos = y0;
     skillQueue = skills;
     isDying = false;
+    isHurt = false;
 }
 
 EnemyObject::~EnemyObject()
@@ -33,26 +34,15 @@ void spawnEnemy(std::vector <EnemyObject>& enemies)
         lastSpawnTime = SDL_GetTicks();
     }
 }
-void EnemyObject::show(int& x, int& y, SDL_Texture* enemyTexture, std::vector <SDL_Texture*> skillTexture)
+int frame0_ = 0;
+Uint32 last_frame_time0_ = 0;
+SDL_Rect clip0[20];
+void EnemyObject::show(int& x, int& y, SDL_Texture* enemyTexture, std::vector <SDL_Texture*> skillTexture, SDL_Texture* tex)
 {
-    if (x < (SCREEN_WIDTH)/2)
-    {
-        x+=2;
-    } else
-    {
-        x-=2;
-    }
-    if (y < (SCREEN_HEIGHT)/2)
-    {
-        y+=1;
-    } else
-    {
-        y-=1;
-    }
     SDL_Texture* texture = NULL;
     SDL_Rect renderQuad = {x, y, 150, 150};
     int x0 = x + 40;
-    if (!isDying)
+    if (!isDying && !isHurt)
     {
         SDL_RenderCopy(gRenderer, enemyTexture, NULL, &renderQuad);
     }
@@ -75,6 +65,47 @@ void EnemyObject::show(int& x, int& y, SDL_Texture* enemyTexture, std::vector <S
         }
         x0+=25;
     }
+    if (isHurt)
+    {
+        for (int j = 0; j < 5; j++)
+        {
+            clip0[j].x = j * 150;
+            clip0[j].y = 0;
+            clip0[j].w = 150;
+            clip0[j].h = 150;
+        }
+        SDL_Rect renderQuad = {x, y, 150, 150};
+        SDL_RenderCopy(gRenderer, tex, &clip0[frame0_], &renderQuad);
+        Uint32 current_time = SDL_GetTicks();
+        if (current_time > last_frame_time0_ + 100)
+        {
+            if (frame0_ < 5)
+                frame0_++;
+            else
+            {
+                isHurt = false;
+                frame0_ = 0;
+                last_frame_time0_ = 0;
+            }
+            last_frame_time0_ = current_time;
+        }
+        return; // không render enemy bình thường nếu đang hurt
+    }
+    if (x < (SCREEN_WIDTH)/2)
+    {
+        x+=2;
+    } else
+    {
+        x-=2;
+    }
+    if (y < (SCREEN_HEIGHT)/2)
+    {
+        y+=1;
+    } else
+    {
+        y-=1;
+    }
+    
 }
 std::vector <char> generateRandomSkill() {
     std::vector <char> skillSymbols = {'-', '|', 'v'};
@@ -87,6 +118,7 @@ std::vector <char> generateRandomSkill() {
     }
     return result;
 }
+
 void attack(char skill, std::vector <EnemyObject>& enemies)
 {
     for (int i = 0; i < enemies.size(); i++)
@@ -95,6 +127,7 @@ void attack(char skill, std::vector <EnemyObject>& enemies)
         {
             if (enemies[i].skillQueue[0] == skill)
             {
+                enemies[i].isHurt = true;
                 enemies[i].skillQueue.erase(enemies[i].skillQueue.begin());
                 std::cout << "đã tấn công quái " << i << std::endl;
             }
@@ -109,7 +142,7 @@ void enemyLive(std::vector <EnemyObject>& enemies, Mix_Chunk* dead, SDL_Texture*
     
     for (int i = 0; i < enemies.size(); i++)
     {
-        if (enemies[i].skillQueue.empty())
+        if (enemies[i].skillQueue.empty() && !enemies[i].isHurt)
         {
             enemies[i].isDying = true;
             for (int j = 0; j < 8; j++)
@@ -122,7 +155,7 @@ void enemyLive(std::vector <EnemyObject>& enemies, Mix_Chunk* dead, SDL_Texture*
             SDL_Rect renderQuad = {enemies[i].xpos, enemies[i].ypos, 150, 150};
             SDL_RenderCopy(gRenderer, tex, &clip[frame_], &renderQuad);
             Uint32 current_time = SDL_GetTicks();
-            if (current_time > last_frame_time_ + 100) 
+            if (current_time > last_frame_time_ + 100)
             {
                 if (frame_ < 8)
                 {
@@ -139,4 +172,3 @@ void enemyLive(std::vector <EnemyObject>& enemies, Mix_Chunk* dead, SDL_Texture*
         }
     }
 }
-
