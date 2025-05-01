@@ -66,7 +66,7 @@ bool isVerticalLine(const std::vector<Point>& points)
         for (Point p : points)
         {
             double khoangcach = abs(a*p.x - p.y +b)/sqrt(a*a+1);
-            if (khoangcach > 30)
+            if (khoangcach > 40)
             {
                 return false;
             }
@@ -88,6 +88,11 @@ bool isLightningLine(const std::vector<Point>& points)
         Point point14 = points[points.size()/4];
         Point point34 = points[points.size()*3/4];
         if ((a*point14.x-point14.y+b)*(a*point34.x-point34.y+b)<0)
+        {
+            return false;
+        }
+        double khoangcach = abs(a*point14.x - point14.y +b)/sqrt(a*a+1);
+        if (khoangcach < 30)
         {
             return false;
         }

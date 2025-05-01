@@ -12,10 +12,10 @@ public:
     int xpos;
     int ypos;
     std::vector <char> skillQueue;
-    void show(int x, int y, SDL_Texture* enemyTexture, std::vector <SDL_Texture*> skillTexture);
+    void show(int& x, int& y, SDL_Texture* enemyTexture, std::vector <SDL_Texture*> skillTexture);
 private :
 };
-
+void enemyLive(std::vector <EnemyObject>& enemies);
 void attack(char skill, std::vector <EnemyObject>& enemies);
 void spawnEnemy(std::vector <EnemyObject>& enemies);
 std::vector <char> generateRandomSkill();
