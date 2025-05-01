@@ -26,6 +26,7 @@ const int SYMBOL_HORIZONTAL = 3;
 //Base
 void close();
 bool InitData();
+bool checkCollision(SDL_Rect a, SDL_Rect b);
 enum Animation
 {
     RUNNING, SCARED, WAITING, DRAWING, HEART,

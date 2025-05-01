@@ -20,7 +20,9 @@ BaseObject sHorizontal;
 BaseObject sSunken;
 BaseObject sVertical;
 BaseObject sEnemyDieRight;
+BaseObject sEnemyDieLeft;
 BaseObject sEnemyHurtRight;
+BaseObject sEnemyHurtLeft;
 SDL_Texture* tsSunken;
 SDL_Texture* tsVertical;
 SDL_Texture* tsLightning;
@@ -34,7 +36,9 @@ SDL_Texture* tHorizontal;
 SDL_Texture* tEnemyLeft;
 SDL_Texture* tEnemyRight;
 SDL_Texture* tEnemyDỉeRight;
+SDL_Texture* tEnemyDỉeLeft;
 SDL_Texture* tEnemyHurtRight;
+SDL_Texture* tEnemyHurtLeft;
 std::vector <Point> points;
 std::vector <EnemyObject> enemies;
 std::vector <SDL_Texture*> skillTexture;
@@ -59,7 +63,9 @@ std::vector <LoadAsset> assets = {
     { &sLightning, "assets/symbols/sLightning.png", &tsLightning},
     { &sHorizontal, "assets/symbols/sHorizontal.png", &tsHorizontal},
     { &sEnemyDieRight, "assets/ghost_die_right.png", &tEnemyDỉeRight},
-    { &sEnemyHurtRight, "assets/ghost_hurt_right.png", &tEnemyHurtRight}
+    { &sEnemyDieLeft, "assets/ghost_die_left.png", &tEnemyDỉeLeft},
+    { &sEnemyHurtRight, "assets/ghost_hurt_right.png", &tEnemyHurtRight},
+    { &sEnemyHurtLeft, "assets/ghost_hurt_left.png", &tEnemyHurtLeft}
 };
 
 bool loadMedia()
@@ -83,7 +89,6 @@ bool loadMedia()
 }
 int main(int argc, char* argv[])
 {
-    //Căn chỉnh FPS
     ImpTimer fps_timer;
     if (!InitData()) return -1;
     if (!loadMedia()) return -1;
@@ -103,21 +108,18 @@ int main(int argc, char* argv[])
     gPlayer.setWaitingTexture(tWaiting);
     gPlayer.setTexture(tWaiting);
     gPlayer.set_clips(WAITING_ANIMATION_FRAMES);
-    //Vòng lặp chính
     while (isRunning)
     {
         fps_timer.start();
         while (SDL_PollEvent(&gEvent))
         {
-            if (gEvent.type == SDL_QUIT) //Nhấn x thì thoát
+            if (gEvent.type == SDL_QUIT)
             {
                 isRunning = false;
             }
             else if (gEvent.type == SDL_MOUSEBUTTONDOWN)
             {
-                //Xoá hết bảng point cũ
                 points.clear();
-                //Bật chế độ vẽ
                 drawingMode = true;
                 gPlayer.setTexture(tDrawing);
                 gPlayer.set_clips(DRAWING_ANIMATION_FRAMES);
@@ -173,18 +175,14 @@ int main(int argc, char* argv[])
             } else if (gEvent.type == SDL_MOUSEMOTION && drawingMode)
             {
                 
-                //Đẩy toạ độ hiện tại của chuột vào vector points
                 points.push_back({gEvent.motion.x, gEvent.motion.y});
                 cout << gEvent.motion.x << " " << gEvent.motion.y << endl;
             }
         }
-        //Xoá màn hình với màu trắng
         SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
         SDL_RenderClear(gRenderer);
-        //Vẽ background full màn hình
         gBackground.render(0, 0, NULL);
-        //Render skill
-        //Vẽ nhân vật
+        gPlayer.show();
         if (points.size()>1)
         {
             for (size_t i = 1; i < points.size(); ++i)
@@ -205,23 +203,29 @@ int main(int argc, char* argv[])
 
             }
         }
-        gPlayer.show();
         spawnEnemy(enemies);
-        enemyLive(enemies, dead, tEnemyDỉeRight);
+        enemyLive(enemies, dead, tEnemyDỉeRight, tEnemyDỉeLeft);
         for (EnemyObject& enemy : enemies)
         {
             if (enemy.xpos < SCREEN_WIDTH/2)
             {
-                enemy.show(enemy.xpos, enemy.ypos, tEnemyLeft, skillTexture, tEnemyHurtRight);
+                enemy.show(enemy.xpos, enemy.ypos, tEnemyLeft, skillTexture, tEnemyHurtRight, tEnemyHurtLeft);
             } else
             {
-                enemy.show(enemy.xpos, enemy.ypos, tEnemyRight, skillTexture, tEnemyHurtRight);
+                enemy.show(enemy.xpos, enemy.ypos, tEnemyRight, skillTexture, tEnemyHurtRight, tEnemyHurtLeft);
             }
             
         }
-        //Cập nhật khung hình mới lên màn hình
+        for (EnemyObject& enemy : enemies)
+        {
+            SDL_Rect playerRect = { (SCREEN_WIDTH - gPlayer.getWidth())/2, (SCREEN_HEIGHT - gPlayer.getHeight())/2, gPlayer.getWidth(), gPlayer.getHeight()};
+            SDL_Rect enemyRect = { enemy.xpos, enemy.ypos, 150, 150 };
+
+            if (checkCollision(playerRect, enemyRect))
+            {
+            }
+        }
         SDL_RenderPresent(gRenderer);
-        //Căn chỉnh FPS
         int real_time = fps_timer.get_ticks();
         int time_one_frame = 1000 / FRAME_PER_SECOND;
         if (real_time < time_one_frame)
@@ -233,7 +237,6 @@ int main(int argc, char* argv[])
             }
         }
     }
-    //Dọn
     gBackground.free();
     gPlayer.free();
     Mix_FreeChunk(hit);

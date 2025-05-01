@@ -25,7 +25,7 @@ bool InitData()
         return -1;
     }
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-    gWindow = SDL_CreateWindow("Feline Fright", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    gWindow = SDL_CreateWindow("Feline Frights", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (gWindow == NULL)
     {
         success = false;
@@ -47,7 +47,14 @@ bool InitData()
     return success;
 }
 
-
+bool checkCollision(SDL_Rect a, SDL_Rect b)
+{
+    if (a.x + a.w > b.x && a.x < b.x + b.w && a.y + a.h > b.y && a.y < b.y + b.h)
+    {
+        return true;
+    }
+    return false;
+}
 
 ImpTimer::ImpTimer()
 {

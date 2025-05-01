@@ -37,7 +37,7 @@ void spawnEnemy(std::vector <EnemyObject>& enemies)
 int frame0_ = 0;
 Uint32 last_frame_time0_ = 0;
 SDL_Rect clip0[20];
-void EnemyObject::show(int& x, int& y, SDL_Texture* enemyTexture, std::vector <SDL_Texture*> skillTexture, SDL_Texture* tex)
+void EnemyObject::show(int& x, int& y, SDL_Texture* enemyTexture, std::vector <SDL_Texture*> skillTexture, SDL_Texture* hurtRTex, SDL_Texture* hurtLTex)
 {
     SDL_Texture* texture = NULL;
     SDL_Rect renderQuad = {x, y, 150, 150};
@@ -75,7 +75,13 @@ void EnemyObject::show(int& x, int& y, SDL_Texture* enemyTexture, std::vector <S
             clip0[j].h = 150;
         }
         SDL_Rect renderQuad = {x, y, 150, 150};
-        SDL_RenderCopy(gRenderer, tex, &clip0[frame0_], &renderQuad);
+        if (x < SCREEN_WIDTH / 2)
+        {
+            SDL_RenderCopy(gRenderer, hurtLTex, &clip0[frame0_], &renderQuad);
+        } else
+        {
+            SDL_RenderCopy(gRenderer, hurtRTex, &clip0[frame0_], &renderQuad);
+        }
         Uint32 current_time = SDL_GetTicks();
         if (current_time > last_frame_time0_ + 100)
         {
@@ -89,7 +95,7 @@ void EnemyObject::show(int& x, int& y, SDL_Texture* enemyTexture, std::vector <S
             }
             last_frame_time0_ = current_time;
         }
-        return; // không render enemy bình thường nếu đang hurt
+        return; 
     }
     if (x < (SCREEN_WIDTH)/2)
     {
@@ -137,7 +143,7 @@ void attack(char skill, std::vector <EnemyObject>& enemies)
 int frame_ = 0;
 Uint32 last_frame_time_ = 0;
 SDL_Rect clip[20];
-void enemyLive(std::vector <EnemyObject>& enemies, Mix_Chunk* dead, SDL_Texture* tex)
+void enemyLive(std::vector <EnemyObject>& enemies, Mix_Chunk* dead, SDL_Texture* dieRTex, SDL_Texture* dieLTex)
 {
     
     for (int i = 0; i < enemies.size(); i++)
@@ -153,7 +159,13 @@ void enemyLive(std::vector <EnemyObject>& enemies, Mix_Chunk* dead, SDL_Texture*
                 clip[j].h = 150;
             }
             SDL_Rect renderQuad = {enemies[i].xpos, enemies[i].ypos, 150, 150};
-            SDL_RenderCopy(gRenderer, tex, &clip[frame_], &renderQuad);
+            if (enemies[i].xpos < SCREEN_WIDTH / 2)
+            {
+                SDL_RenderCopy(gRenderer, dieLTex, &clip[frame_], &renderQuad);
+            } else
+            {
+                SDL_RenderCopy(gRenderer, dieRTex, &clip[frame_], &renderQuad);
+            }
             Uint32 current_time = SDL_GetTicks();
             if (current_time > last_frame_time_ + 100)
             {
