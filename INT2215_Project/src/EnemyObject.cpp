@@ -70,4 +70,18 @@ std::vector <char> generateRandomSkill() {
     }
     return result;
 }
+void attack(char skill, std::vector <EnemyObject>& enemies)
+{
+    for (int i = 0; i < enemies.size(); i++)
+    {
+        if (!enemies[i].skillQueue.empty())
+        {
+            if (enemies[i].skillQueue[0] == skill)
+            {
+                enemies[i].skillQueue.erase(enemies[i].skillQueue.begin());
+                std::cout << "đã tấn công quái " << i << std::endl;
+            }
+        }
+    }
+}
 

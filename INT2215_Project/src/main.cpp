@@ -115,6 +115,7 @@ int main(int argc, char* argv[])
                     gPlayer.setTexture(tHorizontal);
                     gPlayer.set_clips(HORIZONTAL_ANIMATION_FRAMES);
                     gPlayer.skill();
+                    attack('-', enemies);
                     cout << "ĐƯỜNG NGANG" << endl;
                 } else if (isHeartLine(points))
                 {
@@ -127,12 +128,14 @@ int main(int argc, char* argv[])
                     gPlayer.setTexture(tSunken);
                     gPlayer.set_clips(SUNKEN_ANIMATION_FRAMES);
                     gPlayer.skill();
+                    attack('v', enemies);
                     cout << "CHỮ V" << endl;
                 } else if (isVerticalLine(points))
                 {
                     gPlayer.setTexture(tVertical);
                     gPlayer.set_clips(VERTICAL_ANIMATION_FRAMES);
                     gPlayer.skill();
+                    attack('|', enemies);
                     cout << "ĐƯỜNG DỌC" << endl;
                 } else if (isLightningLine(points))
                 {
@@ -170,7 +173,7 @@ int main(int argc, char* argv[])
         }
         gPlayer.show();
         spawnEnemy(enemies);
-        for (EnemyObject enemy : enemies)
+        for (EnemyObject& enemy : enemies)
         {
             if (enemy.xpos == 0)
             {
