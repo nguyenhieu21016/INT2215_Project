@@ -119,4 +119,12 @@ bool isHeartLine(const std::vector<Point>& points)
     }
     return false;
 }
+bool isCircleLine(const std::vector<Point>& points)
+{
+    if (points.size() > 3)
+    {
+        
+    }
+    return false;
+}
 

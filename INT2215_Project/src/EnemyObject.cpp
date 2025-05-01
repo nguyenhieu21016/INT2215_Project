@@ -6,6 +6,7 @@ EnemyObject::EnemyObject(int x0, int y0, std::vector <char> skills)
     xpos = x0;
     ypos = y0;
     skillQueue = skills;
+    isDying = false;
 }
 
 EnemyObject::~EnemyObject()
@@ -34,24 +35,27 @@ void spawnEnemy(std::vector <EnemyObject>& enemies)
 }
 void EnemyObject::show(int& x, int& y, SDL_Texture* enemyTexture, std::vector <SDL_Texture*> skillTexture)
 {
-    if (x < (SCREEN_WIDTH - mWidth)/2)
+    if (x < (SCREEN_WIDTH)/2)
     {
         x+=2;
     } else
     {
         x-=2;
     }
-    if (y < (SCREEN_HEIGHT - mHeight)/2)
+    if (y < (SCREEN_HEIGHT)/2)
     {
-        y+=2;
+        y+=1;
     } else
     {
-        y-=2;
+        y-=1;
     }
     SDL_Texture* texture = NULL;
     SDL_Rect renderQuad = {x, y, 150, 150};
     int x0 = x + 40;
-    SDL_RenderCopy(gRenderer, enemyTexture, NULL, &renderQuad);
+    if (!isDying)
+    {
+        SDL_RenderCopy(gRenderer, enemyTexture, NULL, &renderQuad);
+    }
     for (char skill : skillQueue)
     {
         if (skill == '-')
@@ -97,13 +101,41 @@ void attack(char skill, std::vector <EnemyObject>& enemies)
         }
     }
 }
-void enemyLive(std::vector <EnemyObject>& enemies)
+int frame_ = 0;
+Uint32 last_frame_time_ = 0;
+SDL_Rect clip[20];
+void enemyLive(std::vector <EnemyObject>& enemies, Mix_Chunk* dead, SDL_Texture* tex)
 {
+    
     for (int i = 0; i < enemies.size(); i++)
     {
         if (enemies[i].skillQueue.empty())
         {
-            enemies.erase(enemies.begin()+i);
+            enemies[i].isDying = true;
+            for (int j = 0; j < 8; j++)
+            {
+                clip[j].x = j * 150;
+                clip[j].y = 0;
+                clip[j].w = 150;
+                clip[j].h = 150;
+            }
+            SDL_Rect renderQuad = {enemies[i].xpos, enemies[i].ypos, 150, 150};
+            SDL_RenderCopy(gRenderer, tex, &clip[frame_], &renderQuad);
+            Uint32 current_time = SDL_GetTicks();
+            if (current_time > last_frame_time_ + 100) 
+            {
+                if (frame_ < 8)
+                {
+                    frame_ += 1;
+                } else
+                {
+                    Mix_PlayChannel(-1, dead, 0);
+                    frame_ = 0;
+                    last_frame_time_ = 0;
+                    enemies.erase(enemies.begin());
+                }
+                last_frame_time_ = current_time;
+            }
         }
     }
 }

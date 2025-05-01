@@ -19,6 +19,7 @@ BaseObject sLightning;
 BaseObject sHorizontal;
 BaseObject sSunken;
 BaseObject sVertical;
+BaseObject sEnemyDieRight;
 SDL_Texture* tsSunken;
 SDL_Texture* tsVertical;
 SDL_Texture* tsLightning;
@@ -31,6 +32,7 @@ SDL_Texture* tLightning;
 SDL_Texture* tHorizontal;
 SDL_Texture* tEnemyLeft;
 SDL_Texture* tEnemyRight;
+SDL_Texture* tEnemyDỉeRight;
 std::vector <Point> points;
 std::vector <EnemyObject> enemies;
 std::vector <SDL_Texture*> skillTexture;
@@ -53,7 +55,8 @@ std::vector <LoadAsset> assets = {
     { &sSunken, "assets/symbols/sSunken.png", &tsSunken},
     { &sVertical, "assets/symbols/sVertical.png", &tsVertical},
     { &sLightning, "assets/symbols/sLightning.png", &tsLightning},
-    { &sHorizontal, "assets/symbols/sHorizontal.png", &tsHorizontal}
+    { &sHorizontal, "assets/symbols/sHorizontal.png", &tsHorizontal},
+    { &sEnemyDieRight, "assets/ghost_die_right.png", &tEnemyDỉeRight}
 };
 
 bool loadMedia()
@@ -81,6 +84,17 @@ int main(int argc, char* argv[])
     ImpTimer fps_timer;
     if (!InitData()) return -1;
     if (!loadMedia()) return -1;
+    Mix_Music* bgm = Mix_LoadMUS("assets/bgm.mp3");
+    Mix_Chunk* hit = Mix_LoadWAV("assets/hit.mp3");
+    Mix_Chunk* dead = Mix_LoadWAV("assets/dead.mp3");
+    Mix_VolumeChunk(hit, MIX_MAX_VOLUME / 4);
+    Mix_VolumeChunk(dead, MIX_MAX_VOLUME);
+
+    if (!bgm) {
+        std::cout << "Không load được nhạc nền: " << Mix_GetError() << std::endl;
+        return -1;
+    }
+    Mix_PlayMusic(bgm, -1);
     bool drawingMode = false;
     bool isRunning = true;
     gPlayer.setWaitingTexture(tWaiting);
@@ -116,12 +130,13 @@ int main(int argc, char* argv[])
                     gPlayer.set_clips(HORIZONTAL_ANIMATION_FRAMES);
                     gPlayer.skill();
                     attack('-', enemies);
-                    cout << "ĐƯỜNG NGANG" << endl;
+                    Mix_PlayChannel(-1, hit, 0);
                 } else if (isHeartLine(points))
                 {
                     gPlayer.loadFromFile("assets/heart.png");
                     gPlayer.set_clips(HEART_ANIMATION_FRAMES);
                     gPlayer.skill();
+                    Mix_PlayChannel(-1, hit, 0);
                     cout << "ĐƯỜNG TRÁI TIM" << endl;
                 } else if (isVLine(points))
                 {
@@ -129,12 +144,14 @@ int main(int argc, char* argv[])
                     gPlayer.set_clips(SUNKEN_ANIMATION_FRAMES);
                     gPlayer.skill();
                     attack('v', enemies);
+                    Mix_PlayChannel(-1, hit, 0);
                     cout << "CHỮ V" << endl;
                 } else if (isVerticalLine(points))
                 {
                     gPlayer.setTexture(tVertical);
                     gPlayer.set_clips(VERTICAL_ANIMATION_FRAMES);
                     gPlayer.skill();
+                    Mix_PlayChannel(-1, hit, 0);
                     attack('|', enemies);
                     cout << "ĐƯỜNG DỌC" << endl;
                 } else if (isLightningLine(points))
@@ -142,6 +159,7 @@ int main(int argc, char* argv[])
                     gPlayer.setTexture(tLightning);
                     gPlayer.set_clips(LIGHTNING_ANIMATION_FRAMES);
                     gPlayer.skill();
+                    Mix_PlayChannel(-1, hit, 0);
                     cout << "ĐƯỜNG SÉT" << endl;
                 } else
                 {
@@ -186,9 +204,10 @@ int main(int argc, char* argv[])
         }
         gPlayer.show();
         spawnEnemy(enemies);
+        enemyLive(enemies, dead, tEnemyDỉeRight);
         for (EnemyObject& enemy : enemies)
         {
-            if (enemy.xpos == 0)
+            if (enemy.xpos < SCREEN_WIDTH/2)
             {
                 enemy.show(enemy.xpos, enemy.ypos, tEnemyLeft, skillTexture);
             } else
@@ -197,7 +216,6 @@ int main(int argc, char* argv[])
             }
             
         }
-        enemyLive(enemies);
         //Cập nhật khung hình mới lên màn hình
         SDL_RenderPresent(gRenderer);
         //Căn chỉnh FPS
@@ -215,5 +233,8 @@ int main(int argc, char* argv[])
     //Dọn
     gBackground.free();
     gPlayer.free();
+    Mix_FreeChunk(hit);
+    Mix_FreeMusic(bgm);
+    Mix_CloseAudio();
     return 0;
 }
