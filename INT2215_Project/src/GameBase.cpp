@@ -9,7 +9,6 @@ void close()
     gRenderer = NULL;
     SDL_DestroyWindow(gWindow);
     gWindow = NULL;
-    
     IMG_Quit();
     SDL_Quit();
 }

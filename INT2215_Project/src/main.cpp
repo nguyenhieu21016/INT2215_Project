@@ -15,6 +15,14 @@ BaseObject gLightning;
 BaseObject gHorizontal;
 BaseObject gEnemyLeft;
 BaseObject gEnemyRight;
+BaseObject sLightning;
+BaseObject sHorizontal;
+BaseObject sSunken;
+BaseObject sVertical;
+SDL_Texture* tsSunken;
+SDL_Texture* tsVertical;
+SDL_Texture* tsLightning;
+SDL_Texture* tsHorizontal;
 SDL_Texture* tWaiting;
 SDL_Texture* tDrawing;
 SDL_Texture* tSunken;
@@ -25,6 +33,7 @@ SDL_Texture* tEnemyLeft;
 SDL_Texture* tEnemyRight;
 std::vector <Point> points;
 std::vector <EnemyObject> enemies;
+std::vector <SDL_Texture*> skillTexture;
 
 struct LoadAsset {
     BaseObject* object;
@@ -40,7 +49,11 @@ std::vector <LoadAsset> assets = {
     { &gLightning, "assets/lightning.png", &tLightning},
     { &gHorizontal, "assets/horizontal.png", &tHorizontal},
     { &gEnemyLeft, "assets/ghost_normal_left.png", &tEnemyLeft},
-    { &gEnemyRight, "assets/ghost_normal_right.png", &tEnemyRight}
+    { &gEnemyRight, "assets/ghost_normal_right.png", &tEnemyRight},
+    { &sSunken, "assets/symbols/sSunken.png", &tsSunken},
+    { &sVertical, "assets/symbols/sVertical.png", &tsVertical},
+    { &sLightning, "assets/symbols/sLightning.png", &tsLightning},
+    { &sHorizontal, "assets/symbols/sHorizontal.png", &tsHorizontal}
 };
 
 bool loadMedia()
@@ -56,6 +69,10 @@ bool loadMedia()
             *asset.texturePtr = asset.object->getTexture();
         }
     }
+    skillTexture.push_back(tsSunken);
+    skillTexture.push_back(tsLightning);
+    skillTexture.push_back(tsVertical);
+    skillTexture.push_back(tsHorizontal);
     return success;
 }
 int main(int argc, char* argv[])
@@ -157,10 +174,10 @@ int main(int argc, char* argv[])
         {
             if (enemy.xpos == 0)
             {
-                enemy.show(enemy.xpos, enemy.ypos, tEnemyLeft);
+                enemy.show(enemy.xpos, enemy.ypos, tEnemyLeft, skillTexture);
             } else
             {
-                enemy.show(enemy.xpos, enemy.ypos, tEnemyRight);
+                enemy.show(enemy.xpos, enemy.ypos, tEnemyRight, skillTexture);
             }
             
         }

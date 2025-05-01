@@ -1,26 +1,5 @@
 #include "EnemyObject.h"
-
-/*BaseObject sLightning;
-BaseObject sHorizontal;
-BaseObject sSunken;
-BaseObject sVertical;
-SDL_Texture* tsSunken;
-SDL_Texture* tsVertical;
-SDL_Texture* tsLightning;
-SDL_Texture* tsHorizontal;
-
-
-struct LoadAsset {
-    BaseObject* object;
-    const char* path;
-    SDL_Texture** texturePtr;
-};
-std::vector <LoadAsset> assets = {
-    { &sSunken, "assets/symbols/sSunken.png", &tsSunken},
-    { &sVertical, "assets/symbols/sVertical.png", &tsVertical},
-    { &sLightning, "assets/symbols/sLightning.png", &tsLightning},
-    { &sHorizontal, "assets/symbols/sHorizontal.png", &tsHorizontal}
-};*/
+#include "BaseObject.h"
 
 EnemyObject::EnemyObject(int x0, int y0, std::vector <char> skills)
 {
@@ -31,7 +10,9 @@ EnemyObject::EnemyObject(int x0, int y0, std::vector <char> skills)
 
 EnemyObject::~EnemyObject()
 {
+    free();
 }
+
 Uint32 lastSpawnTime = 0;
 void spawnEnemy(std::vector <EnemyObject>& enemies)
 {
@@ -42,20 +23,46 @@ void spawnEnemy(std::vector <EnemyObject>& enemies)
         std::vector<char> skills = generateRandomSkill();
         EnemyObject newEnemy(x, y, skills);
         enemies.push_back(newEnemy);
-        std::cout << "Spawn : " << x << " " << y << std::endl;
+        std::cout << "Spawn : " << x << " " << y << " Skill : ";
+        for (char c : skills)
+        {
+            std::cout << c << " ";
+        }
+        std::cout << std::endl;
         lastSpawnTime = SDL_GetTicks();
-
     }
 }
-void EnemyObject::show(int x, int y, SDL_Texture* enemyTexture)
+void EnemyObject::show(int x, int y, SDL_Texture* enemyTexture, std::vector <SDL_Texture*> skillTexture)
 {
+    SDL_Texture* texture = NULL;
     SDL_Rect renderQuad = {x, y, 150, 150};
+    int x0 = x + 40;
     SDL_RenderCopy(gRenderer, enemyTexture, NULL, &renderQuad);
+    for (char skill : skillQueue)
+    {
+        if (skill == '-')
+        {
+            texture = skillTexture[SYMBOL_HORIZONTAL];
+        } else if (skill == 'v')
+        {
+            texture = skillTexture[SYMBOl_SUNKEN];
+        } else if (skill == '|')
+        {
+            texture = skillTexture[SYMBOL_VERTICAL];
+        }
+        if (texture != NULL)
+        {
+            SDL_Rect renderQuad = {x0, y, 24, 24};
+            SDL_RenderCopy(gRenderer, texture, NULL, &renderQuad);
+        }
+        x0+=25;
+    }
+    
 }
 std::vector <char> generateRandomSkill() {
     std::vector <char> skillSymbols = {'-', '|', 'v'};
     std::vector <char> result;
-    int numSkill = rand() % 3;
+    int numSkill = rand() % 3 + 1;
     for(int i = 0; i < numSkill; ++i)
     {
         int randomIndex = rand() % skillSymbols.size();

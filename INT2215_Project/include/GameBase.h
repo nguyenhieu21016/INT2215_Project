@@ -9,6 +9,7 @@ extern SDL_Window* gWindow;
 extern SDL_Renderer* gRenderer;
 static SDL_Event gEvent;
 
+
 //Screen
 const int FRAME_PER_SECOND = 24;
 const int SCREEN_WIDTH = 1280;
@@ -16,6 +17,10 @@ const int SCREEN_HEIGHT = 720;
 const int SCREEN_BPP = 32;
 const int FRAME_CHARACTER_WIDTH = 190;
 const int FRAME_CHARACTER_HEIGHT = 170;
+const int SYMBOl_SUNKEN = 0;
+const int SYMBOL_LIGHTNING = 1;
+const int SYMBOL_VERTICAL = 2;
+const int SYMBOL_HORIZONTAL = 3;
 
 //Base
 void close();
