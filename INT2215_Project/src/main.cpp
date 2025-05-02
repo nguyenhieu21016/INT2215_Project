@@ -23,6 +23,7 @@ BaseObject sEnemyDieRight;
 BaseObject sEnemyDieLeft;
 BaseObject sEnemyHurtRight;
 BaseObject sEnemyHurtLeft;
+BaseObject gTextTexture;
 SDL_Texture* tsSunken;
 SDL_Texture* tsVertical;
 SDL_Texture* tsLightning;
@@ -39,9 +40,11 @@ SDL_Texture* tEnemyDỉeRight;
 SDL_Texture* tEnemyDỉeLeft;
 SDL_Texture* tEnemyHurtRight;
 SDL_Texture* tEnemyHurtLeft;
+SDL_Texture* digitTextures[10];
 std::vector <Point> points;
 std::vector <EnemyObject> enemies;
 std::vector <SDL_Texture*> skillTexture;
+int score = 0;
 
 struct LoadAsset {
     BaseObject* object;
@@ -70,6 +73,7 @@ std::vector <LoadAsset> assets = {
 
 bool loadMedia()
 {
+    SDL_Color textColor = {255, 255, 255};
     bool success = true;
     for (const auto& asset : assets)
     {
@@ -80,6 +84,26 @@ bool loadMedia()
         {
             *asset.texturePtr = asset.object->getTexture();
         }
+    }
+    gFont = TTF_OpenFont( "assets/fonts/PixelifySans.ttf", 28 );
+        if( gFont == NULL )
+        {
+            printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
+            success = false;
+        }
+    for (int i = 0; i < 10; i++)
+    {
+        std::string digitStr = std::to_string(i);
+        SDL_Surface* textSurface = TTF_RenderText_Solid( gFont, digitStr.c_str(), textColor );
+            if( textSurface == NULL )
+            {
+                printf( "Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError() );
+            }
+            else
+            {
+                digitTextures[i] = SDL_CreateTextureFromSurface( gRenderer, textSurface );
+                SDL_FreeSurface(textSurface);
+            }
     }
     skillTexture.push_back(tsSunken);
     skillTexture.push_back(tsLightning);
@@ -204,7 +228,8 @@ int main(int argc, char* argv[])
             }
         }
         spawnEnemy(enemies);
-        enemyLive(enemies, dead, tEnemyDỉeRight, tEnemyDỉeLeft);
+        enemyLive(enemies, dead, tEnemyDỉeRight, tEnemyDỉeLeft, score);
+        renderScore(gRenderer, score, 20, 20, digitTextures);
         for (EnemyObject& enemy : enemies)
         {
             if (enemy.xpos < SCREEN_WIDTH/2)

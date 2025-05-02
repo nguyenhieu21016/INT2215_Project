@@ -34,7 +34,32 @@ bool BaseObject::loadFromFile(std::string path)
     mTexture = newTexture;
     return (mTexture != NULL);
 }
+bool BaseObject::loadFromRenderedText(std::string textureText, SDL_Color textColor)
+{
+    free();
+    SDL_Surface* textSurface = TTF_RenderText_Solid( gFont, textureText.c_str(), textColor );
+        if( textSurface == NULL )
+        {
+            printf( "Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError() );
+        }
+        else
+        {
+            mTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
+            if( mTexture == NULL )
+            {
+                printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
+            }
+            else
+            {
+                mWidth = textSurface->w;
+                mHeight = textSurface->h;
+            }
 
+            SDL_FreeSurface( textSurface );
+        }
+        
+    return mTexture != NULL;
+}
 void BaseObject::render(int x, int y, const SDL_Rect* clip)
 {
     if (mTexture == NULL || gRenderer == NULL)
@@ -76,4 +101,18 @@ int BaseObject::getHeight()
 SDL_Texture* BaseObject::getTexture()
 {
     return mTexture;
+}
+void renderScore(SDL_Renderer* renderer, int score, int x, int y, SDL_Texture* digitTextures[10])
+{
+    std::string scoreStr = std::to_string(score);
+    int offsetX = 0;
+    for (char c : scoreStr)
+    {
+        int digit = c - '0';
+        int w, h;
+        SDL_QueryTexture(digitTextures[digit], NULL, NULL, &w, &h);
+        SDL_Rect renderQuad = {x + offsetX, y, w, h};
+        SDL_RenderCopy(renderer, digitTextures[digit], NULL, &renderQuad);
+        offsetX += 15;
+    }
 }

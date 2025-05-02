@@ -5,10 +5,12 @@
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
 #include <SDL2_mixer/SDL_mixer.h>
+#include <SDL2_ttf/SDL_ttf.h>
 
 extern SDL_Window* gWindow;
 extern SDL_Renderer* gRenderer;
 static SDL_Event gEvent;
+extern TTF_Font* gFont;
 
 
 //Screen
