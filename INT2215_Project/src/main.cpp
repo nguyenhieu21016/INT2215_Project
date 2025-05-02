@@ -91,7 +91,7 @@ bool loadMedia()
             *asset.texturePtr = asset.object->getTexture();
         }
     }
-    gFont = TTF_OpenFont( "assets/fonts/m6x11.ttf", 28 );
+    gFont = TTF_OpenFont( "assets/fonts/m6x11.ttf", 34 );
         if( gFont == NULL )
         {
             printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
