@@ -11,6 +11,7 @@ BaseObject gWaiting;
 BaseObject gSunken;
 BaseObject gVertical;
 BaseObject gDrawing;
+BaseObject gHurt;
 BaseObject gLightning;
 BaseObject gHorizontal;
 BaseObject gEnemyLeft;
@@ -29,6 +30,7 @@ SDL_Texture* tsLightning;
 SDL_Texture* tsHorizontal;
 SDL_Texture* tWaiting;
 SDL_Texture* tDrawing;
+SDL_Texture* tHurt;
 SDL_Texture* tSunken;
 SDL_Texture* tVertical;
 SDL_Texture* tLightning;
@@ -57,6 +59,7 @@ std::vector <LoadAsset> assets = {
     { &gSunken, "assets/sunken.png", &tSunken},
     { &gVertical, "assets/vertical.png", &tVertical},
     { &gLightning, "assets/lightning.png", &tLightning},
+    { &gHurt, "assets/hurt.png", &tHurt},
     { &gHorizontal, "assets/horizontal.png", &tHorizontal},
     { &gEnemyLeft, "assets/ghost_normal_left.png", &tEnemyLeft},
     { &gEnemyRight, "assets/ghost_normal_right.png", &tEnemyRight},
@@ -205,7 +208,6 @@ int main(int argc, char* argv[])
         SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
         SDL_RenderClear(gRenderer);
         gBackground.render(0, 0, NULL);
-        gPlayer.show();
         if (points.size()>1)
         {
             for (size_t i = 1; i < points.size(); ++i)
@@ -227,6 +229,19 @@ int main(int argc, char* argv[])
             }
         }
         spawnEnemy(enemies);
+        for (EnemyObject& enemy : enemies)
+        {
+            SDL_Rect playerRect = { (SCREEN_WIDTH - gPlayer.getWidth())/2, (SCREEN_HEIGHT - gPlayer.getHeight())/2, gPlayer.getWidth(), gPlayer.getHeight()};
+            SDL_Rect enemyRect = { enemy.xpos, enemy.ypos, 150, 150 };
+
+            if (checkCollision(playerRect, enemyRect))
+            {
+                enemy.skillQueue.clear();
+                gPlayer.setTexture(tHurt);
+                gPlayer.set_clips(HURT_ANIMATION_FRAMES);
+                gPlayer.skill();
+            }
+        }
         enemyLive(enemies, dead, tEnemyDỉeRight, tEnemyDỉeLeft, score);
         renderScore(gRenderer, score, 50, 30, digitTextures);
         for (EnemyObject& enemy : enemies)
@@ -240,16 +255,7 @@ int main(int argc, char* argv[])
             }
             
         }
-        for (EnemyObject& enemy : enemies)
-        {
-            SDL_Rect playerRect = { (SCREEN_WIDTH - gPlayer.getWidth())/2, (SCREEN_HEIGHT - gPlayer.getHeight())/2, gPlayer.getWidth(), gPlayer.getHeight()};
-            SDL_Rect enemyRect = { enemy.xpos, enemy.ypos, 150, 150 };
-
-            if (checkCollision(playerRect, enemyRect))
-            {
-                enemy.skillQueue.clear();
-            }
-        }
+        gPlayer.show();
         SDL_RenderPresent(gRenderer);
         int real_time = fps_timer.get_ticks();
         int time_one_frame = 1000 / FRAME_PER_SECOND;
