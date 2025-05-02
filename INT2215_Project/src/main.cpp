@@ -23,7 +23,6 @@ BaseObject sEnemyDieRight;
 BaseObject sEnemyDieLeft;
 BaseObject sEnemyHurtRight;
 BaseObject sEnemyHurtLeft;
-BaseObject gTextTexture;
 SDL_Texture* tsSunken;
 SDL_Texture* tsVertical;
 SDL_Texture* tsLightning;
@@ -85,7 +84,7 @@ bool loadMedia()
             *asset.texturePtr = asset.object->getTexture();
         }
     }
-    gFont = TTF_OpenFont( "assets/fonts/PixelifySans.ttf", 28 );
+    gFont = TTF_OpenFont( "assets/fonts/m6x11.ttf", 28 );
         if( gFont == NULL )
         {
             printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
@@ -229,10 +228,10 @@ int main(int argc, char* argv[])
         }
         spawnEnemy(enemies);
         enemyLive(enemies, dead, tEnemyDỉeRight, tEnemyDỉeLeft, score);
-        renderScore(gRenderer, score, 20, 20, digitTextures);
+        renderScore(gRenderer, score, 50, 30, digitTextures);
         for (EnemyObject& enemy : enemies)
         {
-            if (enemy.xpos < SCREEN_WIDTH/2)
+            if (enemy.xpos < (SCREEN_WIDTH - FRAME_CHARACTER_WIDTH)/2)
             {
                 enemy.show(enemy.xpos, enemy.ypos, tEnemyLeft, skillTexture, tEnemyHurtRight, tEnemyHurtLeft);
             } else
@@ -248,6 +247,7 @@ int main(int argc, char* argv[])
 
             if (checkCollision(playerRect, enemyRect))
             {
+                enemy.skillQueue.clear();
             }
         }
         SDL_RenderPresent(gRenderer);

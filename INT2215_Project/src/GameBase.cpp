@@ -2,6 +2,7 @@
 
 SDL_Renderer* gRenderer = NULL;
 SDL_Window* gWindow = NULL;
+TTF_Font* gFont = NULL;
 
 void close()
 {
@@ -19,6 +20,10 @@ bool InitData()
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         return false;
+    }
+    if (TTF_Init() == -1) {
+        std::cout << "Không thể khởi tạo SDL_ttf: " << TTF_GetError() << std::endl;
+        return -1;
     }
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
         std::cout << "SDL_mixer lỗi: " << Mix_GetError() << std::endl;

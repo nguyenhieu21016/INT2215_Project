@@ -113,6 +113,6 @@ void renderScore(SDL_Renderer* renderer, int score, int x, int y, SDL_Texture* d
         SDL_QueryTexture(digitTextures[digit], NULL, NULL, &w, &h);
         SDL_Rect renderQuad = {x + offsetX, y, w, h};
         SDL_RenderCopy(renderer, digitTextures[digit], NULL, &renderQuad);
-        offsetX += 15;
+        offsetX += w + 3;
     }
 }

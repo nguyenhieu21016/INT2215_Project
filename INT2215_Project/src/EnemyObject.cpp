@@ -97,14 +97,14 @@ void EnemyObject::show(int& x, int& y, SDL_Texture* enemyTexture, std::vector <S
         }
         return; 
     }
-    if (x < (SCREEN_WIDTH)/2)
+    if (x < (SCREEN_WIDTH - FRAME_CHARACTER_WIDTH)/2)
     {
-        x+=2;
+        x+=1;
     } else
     {
-        x-=2;
+        x-=1;
     }
-    if (y < (SCREEN_HEIGHT)/2)
+    if (y < ((SCREEN_HEIGHT - FRAME_CHARACTER_HEIGHT)/2 + 40))
     {
         y+=1;
     } else
@@ -143,7 +143,7 @@ void attack(char skill, std::vector <EnemyObject>& enemies)
 int frame_ = 0;
 Uint32 last_frame_time_ = 0;
 SDL_Rect clip[20];
-void enemyLive(std::vector <EnemyObject>& enemies, Mix_Chunk* dead, SDL_Texture* dieRTex, SDL_Texture* dieLTex)
+void enemyLive(std::vector <EnemyObject>& enemies, Mix_Chunk* dead, SDL_Texture* dieRTex, SDL_Texture* dieLTex, int& score)
 {
     
     for (int i = 0; i < enemies.size(); i++)
@@ -177,7 +177,10 @@ void enemyLive(std::vector <EnemyObject>& enemies, Mix_Chunk* dead, SDL_Texture*
                     Mix_PlayChannel(-1, dead, 0);
                     frame_ = 0;
                     last_frame_time_ = 0;
-                    enemies.erase(enemies.begin());
+                    enemies.erase(enemies.begin() + i);
+                    score += 100;
+                    i--;
+                    continue;
                 }
                 last_frame_time_ = current_time;
             }
