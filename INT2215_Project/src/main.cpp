@@ -231,8 +231,8 @@ int main(int argc, char* argv[])
         spawnEnemy(enemies);
         for (EnemyObject& enemy : enemies)
         {
-            SDL_Rect playerRect = { (SCREEN_WIDTH - gPlayer.getWidth())/2, (SCREEN_HEIGHT - gPlayer.getHeight())/2, gPlayer.getWidth(), gPlayer.getHeight()};
-            SDL_Rect enemyRect = { enemy.xpos, enemy.ypos, 150, 150 };
+            SDL_Rect playerRect = { (SCREEN_WIDTH - gPlayer.getWidth())/2, (SCREEN_HEIGHT - gPlayer.getHeight())/2, gPlayer.getWidth()-90, gPlayer.getHeight()};
+            SDL_Rect enemyRect = { enemy.xpos, enemy.ypos, 60, 150 };
 
             if (checkCollision(playerRect, enemyRect))
             {
