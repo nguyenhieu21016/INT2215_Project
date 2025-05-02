@@ -19,6 +19,7 @@ BaseObject gEnemyRight;
 BaseObject sLightning;
 BaseObject sHorizontal;
 BaseObject sSunken;
+BaseObject sHealth;
 BaseObject sVertical;
 BaseObject sEnemyDieRight;
 BaseObject sEnemyDieLeft;
@@ -26,6 +27,7 @@ BaseObject sEnemyHurtRight;
 BaseObject sEnemyHurtLeft;
 SDL_Texture* tsSunken;
 SDL_Texture* tsVertical;
+SDL_Texture* tsHealth;
 SDL_Texture* tsLightning;
 SDL_Texture* tsHorizontal;
 SDL_Texture* tWaiting;
@@ -43,6 +45,7 @@ SDL_Texture* tEnemyHurtRight;
 SDL_Texture* tEnemyHurtLeft;
 SDL_Texture* digitTextures[10];
 std::vector <Point> points;
+std::vector <SDL_Texture*> hp;
 std::vector <EnemyObject> enemies;
 std::vector <SDL_Texture*> skillTexture;
 int score = 0;
@@ -65,6 +68,7 @@ std::vector <LoadAsset> assets = {
     { &gEnemyRight, "assets/ghost_normal_right.png", &tEnemyRight},
     { &sSunken, "assets/symbols/sSunken.png", &tsSunken},
     { &sVertical, "assets/symbols/sVertical.png", &tsVertical},
+    { &sHealth, "assets/symbols/sHealth.png", &tsHealth},
     { &sLightning, "assets/symbols/sLightning.png", &tsLightning},
     { &sHorizontal, "assets/symbols/sHorizontal.png", &tsHorizontal},
     { &sEnemyDieRight, "assets/ghost_die_right.png", &tEnemyDỉeRight},
@@ -111,6 +115,10 @@ bool loadMedia()
     skillTexture.push_back(tsLightning);
     skillTexture.push_back(tsVertical);
     skillTexture.push_back(tsHorizontal);
+    for (int i = 0; i < 5;  i++)
+    {
+        hp.push_back(tsHealth);
+    }
     return success;
 }
 int main(int argc, char* argv[])
@@ -234,14 +242,17 @@ int main(int argc, char* argv[])
             SDL_Rect playerRect = { (SCREEN_WIDTH - gPlayer.getWidth())/2, (SCREEN_HEIGHT - gPlayer.getHeight())/2, gPlayer.getWidth()-90, gPlayer.getHeight()};
             SDL_Rect enemyRect = { enemy.xpos, enemy.ypos, 60, 150 };
 
-            if (checkCollision(playerRect, enemyRect))
+            if (!enemy.hasCollided && checkCollision(playerRect, enemyRect))
             {
+                enemy.hasCollided = true;
                 enemy.skillQueue.clear();
                 gPlayer.setTexture(tHurt);
                 gPlayer.set_clips(HURT_ANIMATION_FRAMES);
-                gPlayer.skill();
+                gPlayer.hurt();
+                hp.erase(hp.begin());
             }
         }
+
         enemyLive(enemies, dead, tEnemyDỉeRight, tEnemyDỉeLeft, score);
         renderScore(gRenderer, score, 50, 30, digitTextures);
         for (EnemyObject& enemy : enemies)
@@ -255,6 +266,7 @@ int main(int argc, char* argv[])
             }
             
         }
+        renderHP(hp);
         gPlayer.show();
         SDL_RenderPresent(gRenderer);
         int real_time = fps_timer.get_ticks();

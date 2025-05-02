@@ -35,6 +35,11 @@ void MainObject::skill()
 {
     status_ = -1;
 }
+void MainObject::hurt()
+{
+    status_ = HURT;
+}
+
 void MainObject::show()
 {
     SDL_Rect renderQuad = {(SCREEN_WIDTH - mWidth)/2, (SCREEN_HEIGHT - mHeight)/2, mWidth, mHeight};

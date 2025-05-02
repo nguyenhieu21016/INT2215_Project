@@ -13,6 +13,7 @@ public:
     int ypos;
     std::vector <char> skillQueue;
     bool isDying;
+    bool hasCollided;
     bool isHurt;
     void show(int& x, int& y, SDL_Texture* enemyTexture, std::vector <SDL_Texture*> skillTexture, SDL_Texture* hurtRTex, SDL_Texture* hurtLTex);
 private :

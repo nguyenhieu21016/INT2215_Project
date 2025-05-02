@@ -23,12 +23,13 @@ public:
     void set_clips(int s);
     void loop();
     void skill();
+    void hurt();
+    int status_;
     void setWaitingTexture(SDL_Texture* textureToLoad);
 private:
     SDL_Rect gSpriteClips[20];
     SDL_Texture* waitingTexture;
     int frame_;
     Uint32 last_frame_time_;
-    int status_;
     int total_frames_;
 };

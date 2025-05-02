@@ -116,3 +116,13 @@ void renderScore(SDL_Renderer* renderer, int score, int x, int y, SDL_Texture* d
         offsetX += w + 3;
     }
 }
+void renderHP(std::vector <SDL_Texture*> hp)
+{
+    int offsetX = 1000;
+    for (SDL_Texture* tex : hp)
+    {
+        SDL_Rect renderQuad = {offsetX, 30, 37, 32};
+        SDL_RenderCopy(gRenderer, tex, NULL, &renderQuad);
+        offsetX+=47;
+    }
+}

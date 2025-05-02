@@ -8,6 +8,7 @@ EnemyObject::EnemyObject(int x0, int y0, std::vector <char> skills)
     skillQueue = skills;
     isDying = false;
     isHurt = false;
+    hasCollided = false;
 }
 
 EnemyObject::~EnemyObject()

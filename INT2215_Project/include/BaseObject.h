@@ -24,6 +24,6 @@ protected:
     SDL_Rect rect_;
 };
 void renderScore(SDL_Renderer* renderer, int score, int x, int y, SDL_Texture* digitTextures[10]);
-
+void renderHP(std::vector <SDL_Texture*> hp);
 
 
