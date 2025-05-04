@@ -22,6 +22,7 @@ BaseObject sSunken;
 BaseObject sHealth;
 BaseObject sVertical;
 BaseObject sEnemyDieRight;
+BaseObject gMenuBackground;
 BaseObject sEnemyDieLeft;
 BaseObject sEnemyHurtRight;
 BaseObject sEnemyHurtLeft;
@@ -57,6 +58,7 @@ struct LoadAsset {
 };
 std::vector <LoadAsset> assets = {
     { &gBackground, "assets/background.png", NULL},
+    { &gMenuBackground, "assets/backgroundmenu.png", NULL},
     { &gWaiting, "assets/waiting.png", &tWaiting},
     { &gDrawing, "assets/drawing.png", &tDrawing},
     { &gSunken, "assets/sunken.png", &tSunken},
@@ -75,6 +77,7 @@ std::vector <LoadAsset> assets = {
     { &sEnemyDieLeft, "assets/ghost_die_left.png", &tEnemyDỉeLeft},
     { &sEnemyHurtRight, "assets/ghost_hurt_right.png", &tEnemyHurtRight},
     { &sEnemyHurtLeft, "assets/ghost_hurt_left.png", &tEnemyHurtLeft}
+
 };
 
 bool loadMedia()
@@ -127,6 +130,7 @@ int main(int argc, char* argv[])
     if (!InitData()) return -1;
     if (!loadMedia()) return -1;
     Mix_Music* bgm = Mix_LoadMUS("assets/bgm.mp3");
+    Mix_Chunk* pause_bgm = Mix_LoadWAV("assets/pause_bgm.mp3");
     Mix_Chunk* hit = Mix_LoadWAV("assets/hit.mp3");
     Mix_Chunk* dead = Mix_LoadWAV("assets/dead.mp3");
     Mix_VolumeChunk(hit, MIX_MAX_VOLUME / 4);
@@ -136,12 +140,14 @@ int main(int argc, char* argv[])
         std::cout << "Không load được nhạc nền: " << Mix_GetError() << std::endl;
         return -1;
     }
-    Mix_PlayMusic(bgm, -1);
     bool drawingMode = false;
     bool isRunning = true;
+    bool isPaused = false;
     gPlayer.setWaitingTexture(tWaiting);
     gPlayer.setTexture(tWaiting);
     gPlayer.set_clips(WAITING_ANIMATION_FRAMES);
+    Mix_PlayMusic(bgm, -1);
+    
     while (isRunning)
     {
         fps_timer.start();
@@ -153,121 +159,151 @@ int main(int argc, char* argv[])
             }
             else if (gEvent.type == SDL_MOUSEBUTTONDOWN)
             {
-                points.clear();
-                drawingMode = true;
-                gPlayer.setTexture(tDrawing);
-                gPlayer.set_clips(DRAWING_ANIMATION_FRAMES);
-                gPlayer.loop();
+                if (!isPaused)
+                {
+                    points.clear();
+                    drawingMode = true;
+                    gPlayer.setTexture(tDrawing);
+                    gPlayer.set_clips(DRAWING_ANIMATION_FRAMES);
+                    gPlayer.loop();
+                }
             } else if (gEvent.type == SDL_MOUSEBUTTONUP)
             {
-                drawingMode = false;
-                gPlayer.setTexture(tWaiting);
-                gPlayer.set_clips(WAITING_ANIMATION_FRAMES);
-                if (isHorizontalLine(points))
+                if (!isPaused)
                 {
-                    gPlayer.setTexture(tHorizontal);
-                    gPlayer.set_clips(HORIZONTAL_ANIMATION_FRAMES);
-                    gPlayer.skill();
-                    attack('-', enemies);
-                    Mix_PlayChannel(-1, hit, 0);
-                } else if (isHeartLine(points))
-                {
-                    gPlayer.loadFromFile("assets/heart.png");
-                    gPlayer.set_clips(HEART_ANIMATION_FRAMES);
-                    gPlayer.skill();
-                    Mix_PlayChannel(-1, hit, 0);
-                    cout << "ĐƯỜNG TRÁI TIM" << endl;
-                } else if (isVLine(points))
-                {
-                    gPlayer.setTexture(tSunken);
-                    gPlayer.set_clips(SUNKEN_ANIMATION_FRAMES);
-                    gPlayer.skill();
-                    attack('v', enemies);
-                    Mix_PlayChannel(-1, hit, 0);
-                    cout << "CHỮ V" << endl;
-                } else if (isVerticalLine(points))
-                {
-                    gPlayer.setTexture(tVertical);
-                    gPlayer.set_clips(VERTICAL_ANIMATION_FRAMES);
-                    gPlayer.skill();
-                    Mix_PlayChannel(-1, hit, 0);
-                    attack('|', enemies);
-                    cout << "ĐƯỜNG DỌC" << endl;
-                } else if (isLightningLine(points))
-                {
-                    gPlayer.setTexture(tLightning);
-                    gPlayer.set_clips(LIGHTNING_ANIMATION_FRAMES);
-                    gPlayer.skill();
-                    Mix_PlayChannel(-1, hit, 0);
-                    cout << "ĐƯỜNG SÉT" << endl;
-                } else
-                {
-                    cout << "ĐÉO CÓ GÌ" << endl;
+                    drawingMode = false;
                     gPlayer.setTexture(tWaiting);
                     gPlayer.set_clips(WAITING_ANIMATION_FRAMES);
+                    if (isHorizontalLine(points))
+                    {
+                        gPlayer.setTexture(tHorizontal);
+                        gPlayer.set_clips(HORIZONTAL_ANIMATION_FRAMES);
+                        gPlayer.skill();
+                        attack('-', enemies);
+                        Mix_PlayChannel(-1, hit, 0);
+                    } else if (isHeartLine(points))
+                    {
+                        gPlayer.loadFromFile("assets/heart.png");
+                        gPlayer.set_clips(HEART_ANIMATION_FRAMES);
+                        gPlayer.skill();
+                        Mix_PlayChannel(-1, hit, 0);
+                        cout << "ĐƯỜNG TRÁI TIM" << endl;
+                    } else if (isVLine(points))
+                    {
+                        gPlayer.setTexture(tSunken);
+                        gPlayer.set_clips(SUNKEN_ANIMATION_FRAMES);
+                        gPlayer.skill();
+                        attack('v', enemies);
+                        Mix_PlayChannel(-1, hit, 0);
+                        cout << "CHỮ V" << endl;
+                    } else if (isVerticalLine(points))
+                    {
+                        gPlayer.setTexture(tVertical);
+                        gPlayer.set_clips(VERTICAL_ANIMATION_FRAMES);
+                        gPlayer.skill();
+                        Mix_PlayChannel(-1, hit, 0);
+                        attack('|', enemies);
+                        cout << "ĐƯỜNG DỌC" << endl;
+                    } else if (isLightningLine(points))
+                    {
+                        gPlayer.setTexture(tLightning);
+                        gPlayer.set_clips(LIGHTNING_ANIMATION_FRAMES);
+                        gPlayer.skill();
+                        Mix_PlayChannel(-1, hit, 0);
+                        cout << "ĐƯỜNG SÉT" << endl;
+                    } else
+                    {
+                        cout << "ĐÉO CÓ GÌ" << endl;
+                        gPlayer.setTexture(tWaiting);
+                        gPlayer.set_clips(WAITING_ANIMATION_FRAMES);
+                    }
                 }
             } else if (gEvent.type == SDL_MOUSEMOTION && drawingMode)
             {
-                
-                points.push_back({gEvent.motion.x, gEvent.motion.y});
-                cout << gEvent.motion.x << " " << gEvent.motion.y << endl;
+                if (!isPaused)
+                {
+                    points.push_back({gEvent.motion.x, gEvent.motion.y});
+                    cout << gEvent.motion.x << " " << gEvent.motion.y << endl;
+                }
+            } else if (gEvent.type == SDL_KEYDOWN)
+            {
+                if (gEvent.key.keysym.sym == SDLK_p)
+                {
+                    isPaused = true;
+                    Mix_PauseMusic();
+                    Mix_PlayChannel(-1, pause_bgm, -1);
+                }
+                if (gEvent.key.keysym.sym == SDLK_r)
+                {
+                    isPaused = false;
+                    Mix_HaltChannel(-1);
+                    Mix_ResumeMusic();
+                }
             }
         }
         SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
         SDL_RenderClear(gRenderer);
-        gBackground.render(0, 0, NULL);
-        if (points.size()>1)
+        if (!isPaused)
         {
-            for (size_t i = 1; i < points.size(); ++i)
+            gBackground.render(0, 0, NULL);
+            if (points.size()>1)
             {
-                SDL_RenderDrawLine(gRenderer, points[i-1].x+1, points[i-1].y, points[i].x+1, points[i].y);
-                SDL_RenderDrawLine(gRenderer, points[i-1].x+2, points[i-1].y, points[i].x+2, points[i].y);
-                SDL_RenderDrawLine(gRenderer, points[i-1].x, points[i-1].y+1, points[i].x, points[i].y+1);
-                SDL_RenderDrawLine(gRenderer, points[i-1].x, points[i-1].y+2, points[i].x, points[i].y+2);
-                SDL_RenderDrawLine(gRenderer, points[i-1].x-1, points[i-1].y, points[i].x-1, points[i].y);
-                SDL_RenderDrawLine(gRenderer, points[i-1].x-2, points[i-1].y, points[i].x-2, points[i].y);
-                SDL_RenderDrawLine(gRenderer, points[i-1].x, points[i-1].y-1, points[i].x, points[i].y-1);
-                SDL_RenderDrawLine(gRenderer, points[i-1].x, points[i-1].y-2, points[i].x, points[i].y-2);
-                SDL_RenderDrawLine(gRenderer, points[i-1].x, points[i-1].y, points[i].x, points[i].y);
-                SDL_RenderDrawLine(gRenderer, points[i-1].x+1, points[i-1].y+1, points[i].x+1, points[i].y+1);
-                SDL_RenderDrawLine(gRenderer, points[i-1].x-1, points[i-1].y-1, points[i].x-1, points[i].y-1);
-                SDL_RenderDrawLine(gRenderer, points[i-1].x+1, points[i-1].y-1, points[i].x+1, points[i].y-1);
-                SDL_RenderDrawLine(gRenderer, points[i-1].x-1, points[i-1].y+1, points[i].x-1, points[i].y+1);
-
+                for (size_t i = 1; i < points.size(); ++i)
+                {
+                    SDL_RenderDrawLine(gRenderer, points[i-1].x+1, points[i-1].y, points[i].x+1, points[i].y);
+                    SDL_RenderDrawLine(gRenderer, points[i-1].x+2, points[i-1].y, points[i].x+2, points[i].y);
+                    SDL_RenderDrawLine(gRenderer, points[i-1].x, points[i-1].y+1, points[i].x, points[i].y+1);
+                    SDL_RenderDrawLine(gRenderer, points[i-1].x, points[i-1].y+2, points[i].x, points[i].y+2);
+                    SDL_RenderDrawLine(gRenderer, points[i-1].x-1, points[i-1].y, points[i].x-1, points[i].y);
+                    SDL_RenderDrawLine(gRenderer, points[i-1].x-2, points[i-1].y, points[i].x-2, points[i].y);
+                    SDL_RenderDrawLine(gRenderer, points[i-1].x, points[i-1].y-1, points[i].x, points[i].y-1);
+                    SDL_RenderDrawLine(gRenderer, points[i-1].x, points[i-1].y-2, points[i].x, points[i].y-2);
+                    SDL_RenderDrawLine(gRenderer, points[i-1].x, points[i-1].y, points[i].x, points[i].y);
+                    SDL_RenderDrawLine(gRenderer, points[i-1].x+1, points[i-1].y+1, points[i].x+1, points[i].y+1);
+                    SDL_RenderDrawLine(gRenderer, points[i-1].x-1, points[i-1].y-1, points[i].x-1, points[i].y-1);
+                    SDL_RenderDrawLine(gRenderer, points[i-1].x+1, points[i-1].y-1, points[i].x+1, points[i].y-1);
+                    SDL_RenderDrawLine(gRenderer, points[i-1].x-1, points[i-1].y+1, points[i].x-1, points[i].y+1);
+                    
+                }
             }
-        }
-        spawnEnemy(enemies);
-        for (EnemyObject& enemy : enemies)
-        {
-            SDL_Rect playerRect = { (SCREEN_WIDTH - gPlayer.getWidth())/2, (SCREEN_HEIGHT - gPlayer.getHeight())/2, gPlayer.getWidth()-90, gPlayer.getHeight()};
-            SDL_Rect enemyRect = { enemy.xpos, enemy.ypos, 60, 150 };
-
-            if (!enemy.hasCollided && checkCollision(playerRect, enemyRect))
+            spawnEnemy(enemies);
+            for (EnemyObject& enemy : enemies)
             {
-                enemy.hasCollided = true;
-                enemy.skillQueue.clear();
-                gPlayer.setTexture(tHurt);
-                gPlayer.set_clips(HURT_ANIMATION_FRAMES);
-                gPlayer.hurt();
-                hp.erase(hp.begin());
-            }
-        }
-
-        enemyLive(enemies, dead, tEnemyDỉeRight, tEnemyDỉeLeft, score);
-        renderScore(gRenderer, score, 50, 30, digitTextures);
-        for (EnemyObject& enemy : enemies)
-        {
-            if (enemy.xpos < (SCREEN_WIDTH - FRAME_CHARACTER_WIDTH)/2)
-            {
-                enemy.show(enemy.xpos, enemy.ypos, tEnemyLeft, skillTexture, tEnemyHurtRight, tEnemyHurtLeft);
-            } else
-            {
-                enemy.show(enemy.xpos, enemy.ypos, tEnemyRight, skillTexture, tEnemyHurtRight, tEnemyHurtLeft);
+                SDL_Rect playerRect = { (SCREEN_WIDTH - gPlayer.getWidth())/2, (SCREEN_HEIGHT - gPlayer.getHeight())/2, gPlayer.getWidth()-90, gPlayer.getHeight()};
+                SDL_Rect enemyRect = { enemy.xpos, enemy.ypos, 60, 150 };
+                
+                if (!enemy.hasCollided && checkCollision(playerRect, enemyRect))
+                {
+                    enemy.hasCollided = true;
+                    enemy.skillQueue.clear();
+                    gPlayer.setTexture(tHurt);
+                    gPlayer.set_clips(HURT_ANIMATION_FRAMES);
+                    gPlayer.hurt();
+                    hp.erase(hp.begin());
+                }
             }
             
+            enemyLive(enemies, dead, tEnemyDỉeRight, tEnemyDỉeLeft, score);
+            renderScore(gRenderer, score, 50, 30, digitTextures);
+            for (EnemyObject& enemy : enemies)
+            {
+                if (enemy.xpos < (SCREEN_WIDTH - FRAME_CHARACTER_WIDTH)/2)
+                {
+                    enemy.show(enemy.xpos, enemy.ypos, tEnemyLeft, skillTexture, tEnemyHurtRight, tEnemyHurtLeft);
+                } else
+                {
+                    enemy.show(enemy.xpos, enemy.ypos, tEnemyRight, skillTexture, tEnemyHurtRight, tEnemyHurtLeft);
+                }
+                
+            }
+            renderHP(hp);
+            gPlayer.show();
+        } else
+        {
+            gMenuBackground.render(0, 0, NULL);
+            renderHP(hp);
+            renderScore(gRenderer, score, 50, 30, digitTextures);
         }
-        renderHP(hp);
-        gPlayer.show();
         SDL_RenderPresent(gRenderer);
         int real_time = fps_timer.get_ticks();
         int time_one_frame = 1000 / FRAME_PER_SECOND;

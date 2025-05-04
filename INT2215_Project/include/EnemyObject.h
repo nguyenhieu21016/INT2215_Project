@@ -1,8 +1,7 @@
 #pragma once
 
 #include "GameBase.h"
-#include "BaseObject.h"
-
+#include "MainObject.h"
 
 class EnemyObject : public BaseObject
 {

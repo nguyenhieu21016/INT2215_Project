@@ -1,6 +1,5 @@
 #pragma once
 
-#include "GameBase.h"
 #include "BaseObject.h"
 
 //Hằng số frame

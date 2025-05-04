@@ -121,7 +121,7 @@ void renderHP(std::vector <SDL_Texture*> hp)
     int offsetX = 1000;
     for (SDL_Texture* tex : hp)
     {
-        SDL_Rect renderQuad = {offsetX, 30, 37, 32};
+        SDL_Rect renderQuad = {offsetX, 30, 40, 40};
         SDL_RenderCopy(gRenderer, tex, NULL, &renderQuad);
         offsetX+=47;
     }
