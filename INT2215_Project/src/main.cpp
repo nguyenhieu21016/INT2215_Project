@@ -29,6 +29,10 @@ BaseObject sEnemyDieLeft;
 BaseObject sEnemyHurtRight;
 BaseObject sEnemyHurtLeft;
 ButtonObject bPause(50, 650);
+ButtonObject bStart((SCREEN_WIDTH - 300) / 2, (SCREEN_HEIGHT - 60) / 2);
+ButtonObject bQuit((SCREEN_WIDTH - 300) / 2, (SCREEN_HEIGHT - 60) / 2 + 90);
+ButtonObject bSelect(0,0);
+ButtonObject bSelectCorner(0,0);
 SDL_Texture* tsSunken;
 SDL_Texture* tsVertical;
 SDL_Texture* tsHealth;
@@ -53,7 +57,6 @@ std::vector <SDL_Texture*> hp;
 std::vector <EnemyObject> enemies;
 std::vector <SDL_Texture*> skillTexture;
 int score = 0;
-
 struct LoadAsset {
     BaseObject* object;
     const char* path;
@@ -64,6 +67,10 @@ std::vector <LoadAsset> assets = {
     { &gMenu, "assets/menu_title.png", NULL},
     { &gMenuBackground, "assets/backgroundmenu.png", NULL},
     { &bPause, "assets/pause_button.png", NULL},
+    { &bStart, "assets/start_button.png", NULL},
+    { &bSelect, "assets/select_button.png", NULL},
+    { &bSelectCorner, "assets/select_corner.png", NULL},
+    { &bQuit, "assets/quit_button.png", NULL},
     { &gWaiting, "assets/waiting.png", &tWaiting},
     { &gDrawing, "assets/drawing.png", &tDrawing},
     { &gSunken, "assets/sunken.png", &tSunken},
@@ -136,6 +143,7 @@ int main(int argc, char* argv[])
     if (!loadMedia()) return -1;
     Mix_Music* bgm = Mix_LoadMUS("assets/bgm.mp3");
     Mix_Chunk* pause_bgm = Mix_LoadWAV("assets/pause_bgm.mp3");
+    Mix_Chunk* title = Mix_LoadWAV("assets/audio/title.mp3");
     Mix_Chunk* hit = Mix_LoadWAV("assets/hit.mp3");
     Mix_Chunk* dead = Mix_LoadWAV("assets/dead.mp3");
     Mix_VolumeChunk(hit, MIX_MAX_VOLUME / 4);
@@ -152,11 +160,19 @@ int main(int argc, char* argv[])
     gPlayer.setWaitingTexture(tWaiting);
     gPlayer.setTexture(tWaiting);
     gPlayer.set_clips(WAITING_ANIMATION_FRAMES);
-    Mix_PlayMusic(bgm, -1);
+    if (isInMenu)
+    {
+        isRunning = false;
+        Mix_PauseMusic();
+        Mix_PlayChannel(-1, title, -1);
+    }
+    bool selectup = false;
+    bool selectdown = false;
     while (isInMenu)
     {
         while (SDL_PollEvent(&gEvent))
         {
+            bStart.handleEvent(&gEvent);
             if (gEvent.type == SDL_QUIT)
             {
                 isRunning = false;
@@ -165,24 +181,64 @@ int main(int argc, char* argv[])
             {
                 isRunning = true;
                 isInMenu = false;
+            } else if (gEvent.key.keysym.sym == SDLK_UP)
+            {
+                selectup = true;
+                selectdown = false;
+            } else if (gEvent.key.keysym.sym == SDLK_DOWN)
+            {
+                selectup = false;
+                selectdown = true;
             }
         }
-        
+
         SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
         SDL_RenderClear(gRenderer);
+        if (bStart.wasClicked())
+        {
+            isRunning = true;
+            isInMenu = false;
+        }
+        if (bQuit.wasClicked())
+        {
+            SDL_Quit();
+        }
+
         gMenu.render(0, 0, NULL);
+        bStart.render((SCREEN_WIDTH - 300) / 2, (SCREEN_HEIGHT - 60) / 2, NULL);
+        if (selectup)
+        {
+            bSelect.render((SCREEN_WIDTH - 300) / 2 - 60, (SCREEN_HEIGHT - 60) / 2, NULL);
+            bSelectCorner.render((SCREEN_WIDTH - 400) / 2 , (SCREEN_HEIGHT - 80) / 2, NULL);
+        }
+        if (selectdown)
+        {
+            bSelect.render((SCREEN_WIDTH - 300) / 2 - 60, (SCREEN_HEIGHT - 60) / 2 + 90, NULL);
+            bSelectCorner.render((SCREEN_WIDTH - 400) / 2 , (SCREEN_HEIGHT - 80) / 2 + 90, NULL);
+        }
+        bQuit.render((SCREEN_WIDTH - 300) / 2, (SCREEN_HEIGHT - 60) / 2 + 90, NULL);
         SDL_RenderPresent(gRenderer);
+    }
+    if (isRunning)
+    {
+        Mix_HaltChannel(-1);
+        Mix_PlayMusic(bgm, -1);
     }
     while (isRunning)
     {
         fps_timer.start();
         if (bPause.wasClicked())
         {
-            isPaused = true;
+            if (!isPaused)
+            {
+                isPaused = true;
+                Mix_PauseMusic();
+                Mix_PlayChannel(-1, pause_bgm, -1);
+            }
         }
         while (SDL_PollEvent(&gEvent))
         {
-            if (gEvent.type == SDL_QUIT || gEvent.key.keysym.sym == SDLK_ESCAPE)
+            if (gEvent.type == SDL_QUIT)
             {
                 isRunning = false;
             } else if (gEvent.type == SDL_MOUSEBUTTONDOWN)
@@ -257,9 +313,11 @@ int main(int argc, char* argv[])
             {
                 if (gEvent.key.keysym.sym == SDLK_p)
                 {
-                    isPaused = true;
-                    Mix_PauseMusic();
-                    Mix_PlayChannel(-1, pause_bgm, -1);
+                    if (!isPaused)
+                    {
+                        isPaused = true;
+                        Mix_PauseMusic();
+                    }
                 }
                 if (gEvent.key.keysym.sym == SDLK_r)
                 {

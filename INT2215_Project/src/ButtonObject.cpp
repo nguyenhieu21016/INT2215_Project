@@ -26,7 +26,6 @@ bool ButtonObject::wasClicked()
 {
     if (isClicked)
     {
-        std::cout << "đm" << std::endl;
         isClicked = false;
         return true;
     }
