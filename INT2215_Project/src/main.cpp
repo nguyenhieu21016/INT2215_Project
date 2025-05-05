@@ -3,10 +3,12 @@
 #include "MainObject.h"
 #include "SkillObject.h"
 #include "EnemyObject.h"
+#include "ButtonObject.h"
 
 using namespace std;
 MainObject gPlayer;
 BaseObject gBackground;
+BaseObject gMenu;
 BaseObject gWaiting;
 BaseObject gSunken;
 BaseObject gVertical;
@@ -26,6 +28,7 @@ BaseObject gMenuBackground;
 BaseObject sEnemyDieLeft;
 BaseObject sEnemyHurtRight;
 BaseObject sEnemyHurtLeft;
+ButtonObject bPause(50, 650);
 SDL_Texture* tsSunken;
 SDL_Texture* tsVertical;
 SDL_Texture* tsHealth;
@@ -58,7 +61,9 @@ struct LoadAsset {
 };
 std::vector <LoadAsset> assets = {
     { &gBackground, "assets/background.png", NULL},
+    { &gMenu, "assets/menu_title.png", NULL},
     { &gMenuBackground, "assets/backgroundmenu.png", NULL},
+    { &bPause, "assets/pause_button.png", NULL},
     { &gWaiting, "assets/waiting.png", &tWaiting},
     { &gDrawing, "assets/drawing.png", &tDrawing},
     { &gSunken, "assets/sunken.png", &tSunken},
@@ -141,23 +146,46 @@ int main(int argc, char* argv[])
         return -1;
     }
     bool drawingMode = false;
-    bool isRunning = true;
+    bool isRunning = false;
+    bool isInMenu = true;
     bool isPaused = false;
     gPlayer.setWaitingTexture(tWaiting);
     gPlayer.setTexture(tWaiting);
     gPlayer.set_clips(WAITING_ANIMATION_FRAMES);
     Mix_PlayMusic(bgm, -1);
-    
-    while (isRunning)
+    while (isInMenu)
     {
-        fps_timer.start();
         while (SDL_PollEvent(&gEvent))
         {
             if (gEvent.type == SDL_QUIT)
             {
                 isRunning = false;
+                isInMenu = false;
+            } else if (gEvent.key.keysym.sym == SDLK_RETURN)
+            {
+                isRunning = true;
+                isInMenu = false;
             }
-            else if (gEvent.type == SDL_MOUSEBUTTONDOWN)
+        }
+        
+        SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+        SDL_RenderClear(gRenderer);
+        gMenu.render(0, 0, NULL);
+        SDL_RenderPresent(gRenderer);
+    }
+    while (isRunning)
+    {
+        fps_timer.start();
+        if (bPause.wasClicked())
+        {
+            isPaused = true;
+        }
+        while (SDL_PollEvent(&gEvent))
+        {
+            if (gEvent.type == SDL_QUIT || gEvent.key.keysym.sym == SDLK_ESCAPE)
+            {
+                isRunning = false;
+            } else if (gEvent.type == SDL_MOUSEBUTTONDOWN)
             {
                 if (!isPaused)
                 {
@@ -236,16 +264,22 @@ int main(int argc, char* argv[])
                 if (gEvent.key.keysym.sym == SDLK_r)
                 {
                     isPaused = false;
+                    drawingMode = false;
+                    points.clear();
+                    gPlayer.setTexture(tWaiting);
+                    gPlayer.set_clips(WAITING_ANIMATION_FRAMES);
                     Mix_HaltChannel(-1);
                     Mix_ResumeMusic();
                 }
             }
+            bPause.handleEvent(&gEvent);
         }
         SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
         SDL_RenderClear(gRenderer);
         if (!isPaused)
         {
             gBackground.render(0, 0, NULL);
+            gPlayer.show();
             if (points.size()>1)
             {
                 for (size_t i = 1; i < points.size(); ++i)
@@ -282,7 +316,6 @@ int main(int argc, char* argv[])
                     hp.erase(hp.begin());
                 }
             }
-            
             enemyLive(enemies, dead, tEnemyDỉeRight, tEnemyDỉeLeft, score);
             renderScore(gRenderer, score, 50, 30, digitTextures);
             for (EnemyObject& enemy : enemies)
@@ -297,7 +330,7 @@ int main(int argc, char* argv[])
                 
             }
             renderHP(hp);
-            gPlayer.show();
+            bPause.render (50, 650, NULL);
         } else
         {
             gMenuBackground.render(0, 0, NULL);
