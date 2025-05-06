@@ -37,7 +37,7 @@ bool BaseObject::loadFromFile(std::string path)
 bool BaseObject::loadFromRenderedText(std::string textureText, SDL_Color textColor)
 {
     free();
-    SDL_Surface* textSurface = TTF_RenderText_Solid( gFont, textureText.c_str(), textColor );
+    SDL_Surface* textSurface = TTF_RenderText_Blended( gFont, textureText.c_str(), textColor );
         if( textSurface == NULL )
         {
             printf( "Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError() );
@@ -113,7 +113,7 @@ void renderScore(SDL_Renderer* renderer, int score, int x, int y, SDL_Texture* d
         SDL_QueryTexture(digitTextures[digit], NULL, NULL, &w, &h);
         SDL_Rect renderQuad = {x + offsetX, y, w, h};
         SDL_RenderCopy(renderer, digitTextures[digit], NULL, &renderQuad);
-        offsetX += w + 3;
+        offsetX += w + 2;
     }
 }
 void renderHP(std::vector <SDL_Texture*> hp)

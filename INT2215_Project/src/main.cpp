@@ -57,6 +57,8 @@ std::vector <SDL_Texture*> hp;
 std::vector <EnemyObject> enemies;
 std::vector <SDL_Texture*> skillTexture;
 int score = 0;
+int lastScoreCheckpoint = 0;
+int ultimate = 0;
 struct LoadAsset {
     BaseObject* object;
     const char* path;
@@ -145,6 +147,8 @@ int main(int argc, char* argv[])
     Mix_Chunk* pause_bgm = Mix_LoadWAV("assets/pause_bgm.mp3");
     Mix_Chunk* title = Mix_LoadWAV("assets/audio/title.mp3");
     Mix_Chunk* hit = Mix_LoadWAV("assets/hit.mp3");
+    Mix_Chunk* select = Mix_LoadWAV("assets/audio/select.mp3");
+    Mix_Chunk* selected = Mix_LoadWAV("assets/audio/selected.mp3");
     Mix_Chunk* dead = Mix_LoadWAV("assets/dead.mp3");
     Mix_VolumeChunk(hit, MIX_MAX_VOLUME / 4);
     Mix_VolumeChunk(dead, MIX_MAX_VOLUME);
@@ -181,21 +185,23 @@ int main(int argc, char* argv[])
             {
                 isRunning = true;
                 isInMenu = false;
-            } else if (gEvent.key.keysym.sym == SDLK_UP)
+            } else if (gEvent.type == SDL_KEYDOWN && gEvent.key.keysym.sym == SDLK_UP)
             {
+                Mix_PlayChannel(-1, select, 0);
                 selectup = true;
                 selectdown = false;
-            } else if (gEvent.key.keysym.sym == SDLK_DOWN)
+            } else if (gEvent.type == SDL_KEYDOWN && gEvent.key.keysym.sym == SDLK_DOWN)
             {
+                Mix_PlayChannel(-1, select, 0);
                 selectup = false;
                 selectdown = true;
             }
         }
-
         SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
         SDL_RenderClear(gRenderer);
         if (bStart.wasClicked())
         {
+            
             isRunning = true;
             isInMenu = false;
         }
@@ -222,10 +228,16 @@ int main(int argc, char* argv[])
     if (isRunning)
     {
         Mix_HaltChannel(-1);
+        Mix_PlayChannel(-1, selected, 0);
         Mix_PlayMusic(bgm, -1);
     }
     while (isRunning)
     {
+        if (score >=1000 && score / 1000 > lastScoreCheckpoint)
+        {
+            ultimate += 1;
+            lastScoreCheckpoint = score / 1000;
+        }
         fps_timer.start();
         if (bPause.wasClicked())
         {
@@ -265,14 +277,7 @@ int main(int argc, char* argv[])
                         gPlayer.skill();
                         attack('-', enemies);
                         Mix_PlayChannel(-1, hit, 0);
-                    } else if (isHeartLine(points))
-                    {
-                        gPlayer.loadFromFile("assets/heart.png");
-                        gPlayer.set_clips(HEART_ANIMATION_FRAMES);
-                        gPlayer.skill();
-                        Mix_PlayChannel(-1, hit, 0);
-                        cout << "ĐƯỜNG TRÁI TIM" << endl;
-                    } else if (isVLine(points))
+                    }  else if (isVLine(points))
                     {
                         gPlayer.setTexture(tSunken);
                         gPlayer.set_clips(SUNKEN_ANIMATION_FRAMES);
@@ -294,6 +299,11 @@ int main(int argc, char* argv[])
                         gPlayer.set_clips(LIGHTNING_ANIMATION_FRAMES);
                         gPlayer.skill();
                         Mix_PlayChannel(-1, hit, 0);
+                        if (ultimate>0)
+                        {
+                            ultimate-=1;
+                            attack('L', enemies);
+                        }
                         cout << "ĐƯỜNG SÉT" << endl;
                     } else
                     {
@@ -337,7 +347,7 @@ int main(int argc, char* argv[])
         if (!isPaused)
         {
             gBackground.render(0, 0, NULL);
-            gPlayer.show();
+            
             if (points.size()>1)
             {
                 for (size_t i = 1; i < points.size(); ++i)
@@ -375,7 +385,8 @@ int main(int argc, char* argv[])
                 }
             }
             enemyLive(enemies, dead, tEnemyDỉeRight, tEnemyDỉeLeft, score);
-            renderScore(gRenderer, score, 50, 30, digitTextures);
+            renderScore(gRenderer, score, 122, 35, digitTextures);
+            renderScore(gRenderer, ultimate, 165, 73, digitTextures);
             for (EnemyObject& enemy : enemies)
             {
                 if (enemy.xpos < (SCREEN_WIDTH - FRAME_CHARACTER_WIDTH)/2)
@@ -387,6 +398,7 @@ int main(int argc, char* argv[])
                 }
                 
             }
+            gPlayer.show();
             renderHP(hp);
             bPause.render (50, 650, NULL);
         } else

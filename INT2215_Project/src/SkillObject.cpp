@@ -27,54 +27,40 @@ bool isVLine(const std::vector<Point>& points)
 }
 bool isHorizontalLine(const std::vector<Point>& points)
 {
-    if (points.size() > 3)
-    {
-        int x1 = points.front().x, y1 = points.front().y;
-        int x2 = points.back().x , y2 = points.back().y;
-        double a = (y1 - y2)/(x1 - x2);
-        double b = y1 - a*x1;
-        if (abs(a) > 0.176)
-        {
-            return false;
-        }
-        for (Point p : points)
-        {
-            double khoangcach = abs(a*p.x - p.y +b)/sqrt(a*a+1);
-            if (khoangcach > 30)
-            {
-                return false;
-            }
-        }
-    } else
-    {
+    if (points.size() <= 3)
         return false;
+
+    int y1 = points.front().y;
+    int y2 = points.back().y;
+
+    if (abs(y1 - y2) > 20)
+        return false;
+
+    for (const Point& p : points)
+    {
+        if (abs(p.y - y1) > 30)
+            return false;
     }
+
     return true;
 }
 bool isVerticalLine(const std::vector<Point>& points)
 {
-    if (points.size() > 3)
-    {
-        int x1 = points.front().x, y1 = points.front().y;
-        int x2 = points.back().x , y2 = points.back().y;
-        double a = (y1 - y2)/(x1 - x2);
-        double b = y1 - a*x1;
-        if (abs(a) > 5.76)
-        {
-            return false;
-        }
-        for (Point p : points)
-        {
-            double khoangcach = abs(a*p.x - p.y +b)/sqrt(a*a+1);
-            if (khoangcach > 40)
-            {
-                return false;
-            }
-        }
-    } else
-    {
+    if (points.size() <= 3)
         return false;
+
+    int x1 = points.front().x;
+    int x2 = points.back().x;
+
+    if (abs(x1 - x2) > 20)
+        return false;
+
+    for (const Point& p : points)
+    {
+        if (abs(p.x - x1) > 30)
+            return false;
     }
+
     return true;
 }
 bool isLightningLine(const std::vector<Point>& points)

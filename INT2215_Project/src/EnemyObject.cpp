@@ -1,6 +1,7 @@
 #include "EnemyObject.h"
 #include "BaseObject.h"
 
+
 EnemyObject::EnemyObject(int x0, int y0, std::vector <char> skills)
 {
     xpos = x0;
@@ -15,12 +16,18 @@ EnemyObject::~EnemyObject()
 {
     free();
 }
-
+int spawntime = 2000;
 Uint32 lastSpawnTime = 0;
+Uint32 lastDifficultyUpdate = 0;
 void spawnEnemy(std::vector <EnemyObject>& enemies)
 {
-    if (SDL_GetTicks() > lastSpawnTime + 2000)
+    if (SDL_GetTicks() > lastSpawnTime + spawntime)
     {
+        if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+            std::cout << "SDL_mixer lỗi: " << Mix_GetError() << std::endl;
+        }
+        Mix_Chunk* spawn = Mix_LoadWAV("assets/audio/spawn.mp3");
+
         int y = rand() % 571 + 1;
         int x = (rand() % 2 == 0) ? 0 : 1130;
         std::vector<char> skills = generateRandomSkill();
@@ -31,8 +38,15 @@ void spawnEnemy(std::vector <EnemyObject>& enemies)
         {
             std::cout << c << " ";
         }
-        std::cout << std::endl;
+        
+        Mix_PlayChannel(-1, spawn, 0);
         lastSpawnTime = SDL_GetTicks();
+    }
+    if (SDL_GetTicks() - lastDifficultyUpdate >= 60000)
+    {
+        std::cout << "Gỉam thời gian spawn quái" << std::endl;
+        spawntime /=4;
+        lastDifficultyUpdate = SDL_GetTicks();
     }
 }
 int frame0_ = 0;
@@ -128,6 +142,13 @@ std::vector <char> generateRandomSkill() {
 
 void attack(char skill, std::vector <EnemyObject>& enemies)
 {
+    if (skill == 'L')
+    {
+        for (EnemyObject& enemy : enemies)
+        {
+            enemy.skillQueue.clear();
+        }
+    }
     for (int i = 0; i < enemies.size(); i++)
     {
         if (!enemies[i].skillQueue.empty())
