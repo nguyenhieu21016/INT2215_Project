@@ -61,9 +61,23 @@
 		60DFE3812DC47F5C002AB39B /* SDL2_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_ttf.framework; path = ../../../../Library/Frameworks/SDL2_ttf.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		6078CE772DCC446B002CA63F /* Exceptions for "INT2215_Project" folder in "INT2215_Project" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				best_score.txt,
+				src/best_score.txt,
+			);
+			target = 60668CB82D715BFE00BA5E73 /* INT2215_Project */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		60668CBB2D715BFE00BA5E73 /* INT2215_Project */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				6078CE772DCC446B002CA63F /* Exceptions for "INT2215_Project" folder in "INT2215_Project" target */,
+			);
 			path = INT2215_Project;
 			sourceTree = "<group>";
 		};

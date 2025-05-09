@@ -6,6 +6,7 @@
 #include <SDL2_image/SDL_image.h>
 #include <SDL2_mixer/SDL_mixer.h>
 #include <SDL2_ttf/SDL_ttf.h>
+#include <fstream>
 
 extern SDL_Window* gWindow;
 extern SDL_Renderer* gRenderer;
@@ -34,6 +35,12 @@ enum Animation
     RUNNING, SCARED, WAITING, DRAWING, HEART,
     SUNKEN, HURT, DIE, VICTORY,
 };
+
+//Lưu điểm
+void saveBestScore(int score);
+int loadBestScore();
+
+
 //Xử lí FPS
 class ImpTimer
 {

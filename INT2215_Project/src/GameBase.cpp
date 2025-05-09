@@ -1,9 +1,11 @@
 #include "GameBase.h"
 
+// Biến toàn cục
 SDL_Renderer* gRenderer = NULL;
 SDL_Window* gWindow = NULL;
 TTF_Font* gFont = NULL;
 
+// Giải phóng
 void close()
 {
     SDL_DestroyRenderer(gRenderer);
@@ -14,44 +16,52 @@ void close()
     SDL_Quit();
 }
 
+// Khởi tạo SDL, TTF, Mixer, window và renderer
 bool InitData()
 {
     bool success = true;
+
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
-        return false;
-    }
-    if (TTF_Init() == -1) {
-        std::cout << "Không thể khởi tạo SDL_ttf: " << TTF_GetError() << std::endl;
-        return -1;
-    }
-    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
-        std::cout << "SDL_mixer lỗi: " << Mix_GetError() << std::endl;
-        return -1;
-    }
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-    gWindow = SDL_CreateWindow("Feline Frights", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    if (gWindow == NULL)
-    {
         success = false;
-    } else
+    }
+    else if (TTF_Init() == -1) {
+        std::cout << "Không thể khởi tạo SDL_ttf: " << TTF_GetError() << std::endl;
+        success = false;
+    }
+    else if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+        std::cout << "SDL_mixer lỗi: " << Mix_GetError() << std::endl;
+        success = false;
+    }
+    else
     {
-        gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
-        if (gRenderer == NULL)
+        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+        gWindow = SDL_CreateWindow("Feline Frights", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+        if (gWindow == NULL)
         {
             success = false;
-        } else
+        }
+        else
         {
-            SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
-            if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
+            gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+            if (gRenderer == NULL)
             {
                 success = false;
+            }
+            else
+            {
+                SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+                if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
+                {
+                    success = false;
+                }
             }
         }
     }
     return success;
 }
 
+// Check va chạm
 bool checkCollision(SDL_Rect a, SDL_Rect b)
 {
     if (a.x + a.w > b.x && a.x < b.x + b.w && a.y + a.h > b.y && a.y < b.y + b.h)
@@ -61,6 +71,21 @@ bool checkCollision(SDL_Rect a, SDL_Rect b)
     return false;
 }
 
+// Lưu điểm cao nhất vào file
+void saveBestScore(int score) {
+    std::ofstream out("best_score.txt");
+    out << score;
+}
+
+// Đọc điểm cao nhất từ file
+int loadBestScore() {
+    std::ifstream in("best_score.txt");
+    int score = 0;
+    if (in >> score) return score;
+    return 0;
+}
+
+// Bộ đo thời gian
 ImpTimer::ImpTimer()
 {
     start_tick_ = 0;

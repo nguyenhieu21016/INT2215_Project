@@ -18,7 +18,7 @@ EnemyObject::~EnemyObject()
 }
 int spawntime = 2000;
 Uint32 lastSpawnTime = 0;
-Uint32 lastDifficultyUpdate = 0;
+extern Uint32 lastDifficultyUpdate = 0;
 void spawnEnemy(std::vector <EnemyObject>& enemies)
 {
     if (SDL_GetTicks() > lastSpawnTime + spawntime)
@@ -44,8 +44,8 @@ void spawnEnemy(std::vector <EnemyObject>& enemies)
     }
     if (SDL_GetTicks() - lastDifficultyUpdate >= 60000)
     {
-        std::cout << "Gỉam thời gian spawn quái" << std::endl;
-        spawntime /=4;
+        std::cout << "Giảm thời gian spawn quái" << std::endl;
+        spawntime = std::max(1000, spawntime - 100);
         lastDifficultyUpdate = SDL_GetTicks();
     }
 }
@@ -131,7 +131,7 @@ void EnemyObject::show(int& x, int& y, SDL_Texture* enemyTexture, std::vector <S
 std::vector <char> generateRandomSkill() {
     std::vector <char> skillSymbols = {'-', '|', 'v'};
     std::vector <char> result;
-    int numSkill = rand() % 4 + 1;
+    int numSkill = rand() % 5 + 1;
     for(int i = 0; i < numSkill; ++i)
     {
         int randomIndex = rand() % skillSymbols.size();
@@ -144,9 +144,12 @@ void attack(char skill, std::vector <EnemyObject>& enemies)
 {
     if (skill == 'L')
     {
-        for (EnemyObject& enemy : enemies)
+        for (int i = 0; i < enemies.size();i++)
         {
-            enemy.skillQueue.clear();
+            if (i < 5)
+            {
+                enemies[i].skillQueue.clear();
+            }
         }
     }
     for (int i = 0; i < enemies.size(); i++)

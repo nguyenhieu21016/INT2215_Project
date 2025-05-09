@@ -18,16 +18,20 @@ void ButtonObject::handleEvent(SDL_Event* gEvent)
         if (x >= xpos && x <= xpos + mWidth &&
             y >= ypos && y <= ypos + mHeight)
         {
+            std::cout << "clicked" << std::endl;
             isClicked = true;
         }
     }
 }
 bool ButtonObject::wasClicked()
 {
+    
     if (isClicked)
     {
+        
         isClicked = false;
         return true;
+       
     }
     return false;
 }
