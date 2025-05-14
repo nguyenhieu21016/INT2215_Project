@@ -23,7 +23,7 @@ extern Uint32 lastDifficultyUpdate = 0;
 void spawnEnemy(std::vector <EnemyObject>& enemies)
 {
     // Sinh quái nếu đã đủ thời gian
-    if (SDL_GetTicks() > lastSpawnTime + spawntime)
+    if (SDL_GetTicks() > lastSpawnTime + spawntime) 
     {
         if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
             std::cout << "SDL_mixer lỗi: " << Mix_GetError() << std::endl;

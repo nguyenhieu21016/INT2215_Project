@@ -114,7 +114,7 @@ bool loadMedia()
     skillTexture.push_back(horizontalSymbolTexture);
 
     // Tạo thanh máu ban đầu (5 HP)
-    for (int i = 0; i < 1;  i++)
+    for (int i = 0; i < 5;  i++)
     {
         hp.push_back(healthSymbolTexture);
     }
