@@ -5,7 +5,10 @@
 - **Lớp:** K69I - CS2
 - **Ngành học:** Khoa học máy tính - CN8
 ## II. Tổng quan về game
-![](preview/logo.png)
+<p align="center">
+  <img src="INT2215_Project/preview/logo.png" width="500">
+</p>
+
 - **Video demo:**
 - **Thể loại**:  Action / Endless
 - **Nền tảng:** PC
@@ -15,8 +18,15 @@
 ## III. Các điểm nổi bật của Feline Frights
 
 ### 1. Kiến trúc hướng đối tượng rõ ràng, dễ mở rộng (Game Structure)
+<p align="center">
+  <img src="INT2215_Project/preview/gamestructure.png" width="200">
+</p>
+
 - Game được xây dựng theo **kiến trúc hướng đối tượng (OOP)**, với mỗi thành phần trong game như nhân vật chính (MainObject), quái vật (EnemyObject), nút bấm (ButtonObject), kỹ năng (SkillObject) đều là các class riêng biệt kế thừa từ BaseObject. Mỗi class quản lý logic và trạng thái riêng, giúp mã nguồn **dễ hiểu, dễ bảo trì, dễ mở rộng**. Ngoài ra, tách riêng phần **quản lý tài nguyên** (GameAssets), **xử lý âm thanh** (SoundManager), **khởi tạo hệ thống** (GameBase) để code được **module hóa** và dễ tổ chức hơn.
 ###  2. Hệ thống quái vật có hành vi linh hoạt và đa dạng (Enemy Behavior System)
+<p align="center">
+  <img src="INT2215_Project/preview/enemyhurt.png" width="500">
+</p>
 
 - **Xuất hiện liên tục**: Quái vật sẽ được spawn đều đặn và **ngày càng nhiều** khi người chơi đạt điểm cao → tăng độ khó theo thời gian.
 - **Hướng di chuyển trái/phải**: Quái vật có thể xuất hiện từ hai bên màn hình, và hiển thị animation khác nhau tùy hướng 
@@ -35,9 +45,17 @@ Trong game, thay vì bấm nút để tấn công, người chơi phải **vẽ 
 - Với skill ⚡, thuật toán tính **góc giữa các đoạn liên tiếp**, nếu có nhiều đoạn ngoặt gấp (zigzag) → nhận là tia sét.
 - Tự kiểm soát ngưỡng sai lệch cho mỗi loại skill, **tạo độ linh hoạt** khi vẽ tay nhưng vẫn đảm bảo chính xác.
 ### 4. Hệ thống hoạt ảnh (Animation System)
+<p align="center">
+  <img src="INT2215_Project/preview/animation.png" width="500">
+</p>
+
 - Game sử dụng hệ thống hoạt ảnh linh hoạt để hiển thị chuyển động và trạng thái của nhân vật chính, đảm bảo phản hồi trực quan mỗi khi người chơi thực hiện hành động - mỗi hành động đều có ảnh động riêng (vẽ skill, trúng đòn, đợi…).
 ### 5. Hệ thống bổ trợ (Additional System)
 #### 5.1. Hệ thống âm thanh đầy đủ, có tùy chỉnh
+<p align="center">
+  <img src="INT2215_Project/preview/sound.png" width="200">
+</p>
+
 
 - Sử dụng **SDL_mixer** để quản lý toàn bộ âm thanh trong game: nhạc nền, âm hiệu khi vẽ, chọn menu, tấn công, pause, bị thương, v.v.
 - Phân chia âm thanh thành **music** (bgm) và **effect** (chunk), load sẵn từ đầu bằng SoundManager.
