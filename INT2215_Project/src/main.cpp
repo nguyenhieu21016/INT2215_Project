@@ -114,7 +114,7 @@ bool loadMedia()
     skillTexture.push_back(horizontalSymbolTexture);
 
     // Tạo thanh máu ban đầu (5 HP)
-    for (int i = 0; i < 5;  i++)
+    for (int i = 0; i < 1;  i++)
     {
         hp.push_back(healthSymbolTexture);
     }
@@ -509,8 +509,8 @@ int main(int argc, char* argv[])
             }
             // Render background game over
             gGameOverBackground.render(0, 0, nullptr);
-            renderScore(gRenderer, score, 900, 200, digitTextures);
-            renderScore(gRenderer, bestScore, 900, 270, digitTextures);
+            renderScore(gRenderer, score, 790, 212, digitTextures);
+            renderScore(gRenderer, bestScore, 850, 261, digitTextures);
             continueOverButton.render (350, 600, nullptr);
             quitOverButton.render (700, 600, nullptr);
             if (continueOverButton.wasClicked())
