@@ -1,6 +1,7 @@
+// GameAssets.cpp: Khởi tạo và quản lý tài nguyên toàn cục của game
 #include "GameAssets.h"
 
-// BaseObject
+// === Các đối tượng hiển thị (BaseObject / MainObject) ===
 MainObject gPlayer;
 BaseObject gBackground;
 BaseObject gGameOverBackground;
@@ -25,33 +26,35 @@ BaseObject sEnemyDieLeft;
 BaseObject sEnemyHurtRight;
 BaseObject sEnemyHurtLeft;
 
-// Button
-ButtonObject bPause(10, 660);
-ButtonObject bContinue(150, 660);
-ButtonObject bContinueOverButton(350, 600);
-ButtonObject bQuitOverButton(700, 600);
-ButtonObject bStart((SCREEN_WIDTH - 300) / 2, (SCREEN_HEIGHT - 60) / 2);
-ButtonObject bQuit((SCREEN_WIDTH - 300) / 2, (SCREEN_HEIGHT - 60) / 2 + 90);
-ButtonObject bSelect(0,0);
-ButtonObject bSelectCorner(0,0);
+// === Các nút bấm (ButtonObject) ===
+ButtonObject pauseButton(10, 660);
+ButtonObject continueButton(150, 660);
+ButtonObject continueOverButton(350, 600);
+ButtonObject quitOverButton(700, 600);
+ButtonObject startButton((SCREEN_WIDTH - 300) / 2, (SCREEN_HEIGHT - 60) / 2);
+ButtonObject quitButton((SCREEN_WIDTH - 300) / 2, (SCREEN_HEIGHT - 60) / 2 + 90);
+ButtonObject selectButton(0, 0);
+ButtonObject selectCornerButton(0, 0);
+ButtonObject volumeOffButton(200, 600);
+ButtonObject volumeOnButton(260, 600);
 
-// Texture
-SDL_Texture* tsSunken = nullptr;
-SDL_Texture* tsVertical = nullptr;
-SDL_Texture* tsHealth = nullptr;
-SDL_Texture* tsLightning = nullptr;
-SDL_Texture* tsHorizontal = nullptr;
-SDL_Texture* tWaiting = nullptr;
-SDL_Texture* tDrawing = nullptr;
-SDL_Texture* tHurt = nullptr;
-SDL_Texture* tSunken = nullptr;
-SDL_Texture* tVertical = nullptr;
-SDL_Texture* tLightning = nullptr;
-SDL_Texture* tHorizontal = nullptr;
-SDL_Texture* tEnemyLeft = nullptr;
-SDL_Texture* tEnemyRight = nullptr;
-SDL_Texture* tEnemyDỉeRight = nullptr;
-SDL_Texture* tEnemyDỉeLeft = nullptr;
-SDL_Texture* tEnemyHurtRight = nullptr;
-SDL_Texture* tEnemyHurtLeft = nullptr;
-SDL_Texture* digitTextures[10] = { nullptr };
+// === Các texture dùng trong game ===
+SDL_Texture* sunkenSymbolTexture    = nullptr;
+SDL_Texture* verticalSymbolTexture   = nullptr;
+SDL_Texture* healthSymbolTexture     = nullptr;
+SDL_Texture* lightningSymbolTexture  = nullptr;
+SDL_Texture* horizontalSymbolTexture = nullptr;
+SDL_Texture* waitingTexture          = nullptr;
+SDL_Texture* drawingTexture          = nullptr;
+SDL_Texture* hurtTexture             = nullptr;
+SDL_Texture* sunkenTexture           = nullptr;
+SDL_Texture* verticalTexture         = nullptr;
+SDL_Texture* lightningTexture        = nullptr;
+SDL_Texture* horizontalTexture       = nullptr;
+SDL_Texture* enemyLeftTexture        = nullptr;
+SDL_Texture* enemyRightTexture       = nullptr;
+SDL_Texture* enemyDieRightTexture    = nullptr;
+SDL_Texture* enemyDieLeftTexture     = nullptr;
+SDL_Texture* enemyHurtRightTexture   = nullptr;
+SDL_Texture* enemyHurtLeftTexture    = nullptr;
+SDL_Texture* digitTextures[10]       = { nullptr };

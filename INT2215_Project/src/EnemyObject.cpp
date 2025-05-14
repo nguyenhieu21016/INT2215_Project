@@ -1,3 +1,4 @@
+// EnemyObject.cpp: Quản lý hành vi, hiển thị và tương tác của quái vật trong game
 #include "EnemyObject.h"
 #include "BaseObject.h"
 
@@ -21,6 +22,7 @@ Uint32 lastSpawnTime = 0;
 extern Uint32 lastDifficultyUpdate = 0;
 void spawnEnemy(std::vector <EnemyObject>& enemies)
 {
+    // Sinh quái nếu đã đủ thời gian
     if (SDL_GetTicks() > lastSpawnTime + spawntime)
     {
         if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
@@ -28,20 +30,24 @@ void spawnEnemy(std::vector <EnemyObject>& enemies)
         }
         Mix_Chunk* spawn = Mix_LoadWAV("assets/audio/spawn.mp3");
 
+        // Vị trí ngẫu nhiên và kỹ năng ngẫu nhiên
         int y = rand() % 571 + 1;
         int x = (rand() % 2 == 0) ? 0 : 1130;
         std::vector<char> skills = generateRandomSkill();
         EnemyObject newEnemy(x, y, skills);
         enemies.push_back(newEnemy);
+        // In thông tin quái vừa sinh
         std::cout << "Spawn : " << x << " " << y << " Skill : ";
         for (char c : skills)
         {
             std::cout << c << " ";
         }
         
+        // Phát âm thanh spawn
         Mix_PlayChannel(-1, spawn, 0);
         lastSpawnTime = SDL_GetTicks();
     }
+    // Tăng độ khó theo thời gian
     if (SDL_GetTicks() - lastDifficultyUpdate >= 60000)
     {
         std::cout << "Giảm thời gian spawn quái" << std::endl;
@@ -57,10 +63,12 @@ void EnemyObject::show(int& x, int& y, SDL_Texture* enemyTexture, std::vector <S
     SDL_Texture* texture = NULL;
     SDL_Rect renderQuad = {x, y, 150, 150};
     int x0 = x + 40;
+    // Hiển thị quái nếu không bị thương hay đang chết
     if (!isDying && !isHurt)
     {
         SDL_RenderCopy(gRenderer, enemyTexture, NULL, &renderQuad);
     }
+    // Vẽ các biểu tượng kỹ năng
     for (char skill : skillQueue)
     {
         if (skill == '-')
@@ -80,6 +88,7 @@ void EnemyObject::show(int& x, int& y, SDL_Texture* enemyTexture, std::vector <S
         }
         x0+=25;
     }
+    // Hiển thị hiệu ứng bị thương
     if (isHurt)
     {
         for (int j = 0; j < 5; j++)
@@ -90,6 +99,7 @@ void EnemyObject::show(int& x, int& y, SDL_Texture* enemyTexture, std::vector <S
             clip0[j].h = 150;
         }
         SDL_Rect renderQuad = {x, y, 150, 150};
+        // Hiệu ứng bị thương trái/phải màn hình
         if (x < SCREEN_WIDTH / 2)
         {
             SDL_RenderCopy(gRenderer, hurtLTex, &clip0[frame0_], &renderQuad);
@@ -110,8 +120,9 @@ void EnemyObject::show(int& x, int& y, SDL_Texture* enemyTexture, std::vector <S
             }
             last_frame_time0_ = current_time;
         }
-        return; 
+        return;
     }
+    // Di chuyển enemy dần vào giữa màn hình
     if (x < (SCREEN_WIDTH - FRAME_CHARACTER_WIDTH)/2)
     {
         x+=1;
@@ -131,6 +142,7 @@ void EnemyObject::show(int& x, int& y, SDL_Texture* enemyTexture, std::vector <S
 std::vector <char> generateRandomSkill() {
     std::vector <char> skillSymbols = {'-', '|', 'v'};
     std::vector <char> result;
+    // Chọn kỹ năng ngẫu nhiên
     int numSkill = rand() % 5 + 1;
     for(int i = 0; i < numSkill; ++i)
     {
@@ -142,6 +154,7 @@ std::vector <char> generateRandomSkill() {
 
 void attack(char skill, std::vector <EnemyObject>& enemies)
 {
+    // Nếu là skill đặc biệt 'L', xóa toàn bộ skill của 5 quái đầu
     if (skill == 'L')
     {
         for (int i = 0; i < enemies.size();i++)
@@ -154,6 +167,7 @@ void attack(char skill, std::vector <EnemyObject>& enemies)
     }
     for (int i = 0; i < enemies.size(); i++)
     {
+        // Tấn công quái nếu skill đầu khớp
         if (!enemies[i].skillQueue.empty())
         {
             if (enemies[i].skillQueue[0] == skill)
@@ -173,9 +187,11 @@ void enemyLive(std::vector <EnemyObject>& enemies, Mix_Chunk* dead, SDL_Texture*
     
     for (int i = 0; i < enemies.size(); i++)
     {
+        // Nếu quái không còn skill và không bị thương → bắt đầu chết
         if (enemies[i].skillQueue.empty() && !enemies[i].isHurt)
         {
             enemies[i].isDying = true;
+            // Thiết lập animation chết
             for (int j = 0; j < 8; j++)
             {
                 clip[j].x = j * 150;
@@ -191,6 +207,7 @@ void enemyLive(std::vector <EnemyObject>& enemies, Mix_Chunk* dead, SDL_Texture*
             {
                 SDL_RenderCopy(gRenderer, dieRTex, &clip[frame_], &renderQuad);
             }
+            // Kiểm soát tốc độ animation
             Uint32 current_time = SDL_GetTicks();
             if (current_time > last_frame_time_ + 100)
             {
@@ -199,6 +216,7 @@ void enemyLive(std::vector <EnemyObject>& enemies, Mix_Chunk* dead, SDL_Texture*
                     frame_ += 1;
                 } else
                 {
+                    // Xóa quái, tăng điểm, phát âm thanh
                     Mix_PlayChannel(-1, dead, 0);
                     frame_ = 0;
                     last_frame_time_ = 0;

@@ -1,10 +1,12 @@
+// GameAssets.h: Khai báo các đối tượng, nút bấm, và texture dùng trong game
 #pragma once
 #include "BaseObject.h"
 #include "MainObject.h"
 #include "ButtonObject.h"
 #include "GameBase.h"
 
-//Base Object
+// === Các đối tượng trong game ===
+// Quái
 extern MainObject gPlayer;
 extern BaseObject gBackground;
 extern BaseObject gGameOverBackground;
@@ -29,35 +31,37 @@ extern BaseObject sEnemyDieLeft;
 extern BaseObject sEnemyHurtRight;
 extern BaseObject sEnemyHurtLeft;
 
-// Button
-extern ButtonObject bPause;
-extern ButtonObject bStart;
-extern ButtonObject bContinue;
-extern ButtonObject bVolumeOff;
-extern ButtonObject bVolumeOn;
-extern ButtonObject bContinueOverButton;
-extern ButtonObject bQuitOverButton;
-extern ButtonObject bQuit;
-extern ButtonObject bSelect;
-extern ButtonObject bSelectCorner;
+// === Các nút bấm trong game ===
+// Nút bấm
+extern ButtonObject pauseButton;
+extern ButtonObject startButton;
+extern ButtonObject continueButton;
+extern ButtonObject volumeOffButton;
+extern ButtonObject volumeOnButton;
+extern ButtonObject continueOverButton;
+extern ButtonObject quitOverButton;
+extern ButtonObject quitButton;
+extern ButtonObject selectButton;
+extern ButtonObject selectCornerButton;
 
-// Texture
-extern SDL_Texture* tsSunken;
-extern SDL_Texture* tsVertical;
-extern SDL_Texture* tsHealth;
-extern SDL_Texture* tsLightning;
-extern SDL_Texture* tsHorizontal;
-extern SDL_Texture* tWaiting;
-extern SDL_Texture* tDrawing;
-extern SDL_Texture* tHurt;
-extern SDL_Texture* tSunken;
-extern SDL_Texture* tVertical;
-extern SDL_Texture* tLightning;
-extern SDL_Texture* tHorizontal;
-extern SDL_Texture* tEnemyLeft;
-extern SDL_Texture* tEnemyRight;
-extern SDL_Texture* tEnemyDỉeRight;
-extern SDL_Texture* tEnemyDỉeLeft;
-extern SDL_Texture* tEnemyHurtRight;
-extern SDL_Texture* tEnemyHurtLeft;
+// === Các texture dùng trong game ===
+// Texture các biểu tượng
+extern SDL_Texture* sunkenSymbolTexture;
+extern SDL_Texture* verticalSymbolTexture;
+extern SDL_Texture* healthSymbolTexture;
+extern SDL_Texture* lightningSymbolTexture;
+extern SDL_Texture* horizontalSymbolTexture;
+extern SDL_Texture* waitingTexture;
+extern SDL_Texture* drawingTexture;
+extern SDL_Texture* hurtTexture;
+extern SDL_Texture* sunkenTexture;
+extern SDL_Texture* verticalTexture;
+extern SDL_Texture* lightningTexture;
+extern SDL_Texture* horizontalTexture;
+extern SDL_Texture* enemyLeftTexture;
+extern SDL_Texture* enemyRightTexture;
+extern SDL_Texture* enemyDieRightTexture;
+extern SDL_Texture* enemyDieLeftTexture;
+extern SDL_Texture* enemyHurtRightTexture;
+extern SDL_Texture* enemyHurtLeftTexture;
 extern SDL_Texture* digitTextures[10];
