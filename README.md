@@ -9,7 +9,7 @@
   <img src="INT2215_Project/preview/logo.png" width="500">
 </p>
 
-- **Video demo:**
+- **Video demo:** [Youtube](https://www.youtube.com/watch?v=JaFAb-kBu4Y)
 - **Thể loại**:  Action / Endless
 - **Nền tảng:** PC
 - **Ngôn ngữ**: C++ /  SDL2
