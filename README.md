@@ -12,7 +12,7 @@
 - **Video demo:**
 - **Thể loại**:  Action / Endless
 - **Nền tảng:** PC
-- **Ngôn ngữ**: C++/  SDL2
+- **Ngôn ngữ**: C++ /  SDL2
 - **Tóm tắt:** Trong Feline Frights, người chơi điều khiển một chú mèo học phép thuật, vẽ các hình dạng (như đường thẳng, chữ V, v.v.) để chiến đấu với các quái vật. Người chơi sẽ vẽ các hình dạng trên màn hình để tiêu diệt các quái vật đang tiến tới, đồng thời tránh để quái vật tấn công mình. Game có độ khó tăng dần (càng ngày sẽ có càng nhiều quái xuất hiện) và không có kết thúc, với mục tiêu là duy trì sống sót càng lâu càng tốt.
 - **Ngưỡng điểm mong muốn:** 9 - 10
 ## III. Các điểm nổi bật của Feline Frights
@@ -27,8 +27,11 @@
 <p align="center">
   <img src="INT2215_Project/preview/enemyhurt.png" width="500">
 </p>
-
-- **Xuất hiện liên tục**: Quái vật sẽ được spawn đều đặn và **ngày càng nhiều** khi người chơi đạt điểm cao → tăng độ khó theo thời gian.
+<p align="center">
+  <img src="INT2215_Project/preview/boss.png" width="300">
+</p>
+- **Xuất hiện liên tục**: Quái vật sẽ được spawn đều đặn và **ngày càng nhiều** (sau mỗi 60s giảm 100ms, min 1000ms) khi người chơi đạt điểm cao → tăng độ khó theo thời gian.
+- **Cơ chế boss**: Boss xuất hiện sau mỗi 3000 điểm (~30 quái) với lượng máu **gấp đôi**, sau 7s nếu người chơi không giết sẽ bị trừ máu, giết boss sẽ được hồi full máu
 - **Hướng di chuyển trái/phải**: Quái vật có thể xuất hiện từ hai bên màn hình, và hiển thị animation khác nhau tùy hướng 
 - **Skill tương ứng**: Mỗi quái yêu cầu người chơi vẽ đúng **một chuỗi skill tương ứng (random từ 1 -> 5)** mới có thể tiêu diệt, tăng tính chiến lược khi chơi.
 - **Animation khi bị thương/chết**: Có các texture riêng cho **bị thương** và **chết** (enemyHurtRightTexture, enemyDieLeftTexture, …) giúp game sống động và có phản hồi rõ ràng khi đánh trúng.
@@ -71,5 +74,5 @@ Trong game, thay vì bấm nút để tấn công, người chơi phải **vẽ 
 - [Game gốc: Magic Cat Academy](https://doodles.google/doodle/halloween-2016/)
 - [Lazy Foo' Productions](https://lazyfoo.net/tutorials/SDL/index.php).
 - [Trang chính thức của SDL2](https://www.libsdl.org/).
-- Có sử dụng ChatGPT để hỏi đáp các cú pháp
+- Có sử dụng ChatGPT để hỏi đáp, cải thiện code
 - Không sử dụng bất kì nguồn nào khác ngoài các nguồn đã kể
