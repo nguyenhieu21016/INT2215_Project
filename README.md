@@ -75,5 +75,7 @@ Trong game, thay vì bấm nút để tấn công, người chơi phải **vẽ 
 - [Game gốc: Magic Cat Academy](https://doodles.google/doodle/halloween-2016/)
 - [Lazy Foo' Productions](https://lazyfoo.net/tutorials/SDL/index.php).
 - [Trang chính thức của SDL2](https://www.libsdl.org/).
+- Âm thanh từ Dead Cell's soundtrack
+- Các asset khác từ canva
 - Có sử dụng ChatGPT để hỏi đáp, cải thiện code
 - Không sử dụng bất kì nguồn nào khác ngoài các nguồn đã kể
