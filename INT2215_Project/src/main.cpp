@@ -17,7 +17,6 @@ std::vector <EnemyObject> enemies;
 EnemyObject boss;
 bool isBossAlive = false;
 bool hasSpawnedBoss = false;
-int bossHP = 3;
 Uint32 bossSpawnTime = 0;
 
 std::vector <SDL_Texture*> skillTexture;

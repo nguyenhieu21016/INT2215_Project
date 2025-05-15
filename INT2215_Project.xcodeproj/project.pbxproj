@@ -66,6 +66,8 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				best_score.txt,
+				preview/boss.png,
+				preview/enemyhurt.png,
 			);
 			target = 60668CB82D715BFE00BA5E73 /* INT2215_Project */;
 		};
