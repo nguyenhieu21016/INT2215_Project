@@ -2,6 +2,8 @@
 #include "EnemyObject.h"
 #include "BaseObject.h"
 
+int bossDirection = 1;
+
 
 EnemyObject::EnemyObject(int x0, int y0, std::vector <char> skills)
 {
@@ -13,13 +15,24 @@ EnemyObject::EnemyObject(int x0, int y0, std::vector <char> skills)
     hasCollided = false;
 }
 
+EnemyObject::EnemyObject()
+{
+    xpos = ypos = 0;
+    isHurt = false;
+    isDying = false;
+    hasCollided = false;
+    isBoss = false;
+    skillQueue.clear();
+}
+
 EnemyObject::~EnemyObject()
 {
     free();
 }
+
 int spawntime = 2000;
 Uint32 lastSpawnTime = 0;
-extern Uint32 lastDifficultyUpdate = 0;
+Uint32 lastDifficultyUpdate = 0;
 void spawnEnemy(std::vector <EnemyObject>& enemies)
 {
     // Sinh quái nếu đã đủ thời gian
@@ -50,11 +63,13 @@ void spawnEnemy(std::vector <EnemyObject>& enemies)
     // Tăng độ khó theo thời gian
     if (SDL_GetTicks() - lastDifficultyUpdate >= 60000)
     {
+        // Sau một phút giảm 100ms cho thời gian spawn quái, min là 1000ms
         std::cout << "Giảm thời gian spawn quái" << std::endl;
         spawntime = std::max(1000, spawntime - 100);
         lastDifficultyUpdate = SDL_GetTicks();
     }
 }
+
 int frame0_ = 0;
 Uint32 last_frame_time0_ = 0;
 SDL_Rect clip0[20];
@@ -122,20 +137,29 @@ void EnemyObject::show(int& x, int& y, SDL_Texture* enemyTexture, std::vector <S
         }
         return;
     }
-    // Di chuyển enemy dần vào giữa màn hình
-    if (x < (SCREEN_WIDTH - FRAME_CHARACTER_WIDTH)/2)
-    {
-        x+=1;
-    } else
-    {
-        x-=1;
-    }
-    if (y < ((SCREEN_HEIGHT - FRAME_CHARACTER_HEIGHT)/2 + 40))
-    {
-        y+=1;
-    } else
-    {
-        y-=1;
+    // Di chuyển enemy thường, boss thì đứng yên
+    if (!isBoss) {
+        if (x < (SCREEN_WIDTH - FRAME_CHARACTER_WIDTH)/2)
+        {
+            x+=1;
+        } else
+        {
+            x-=1;
+        }
+        if (y < ((SCREEN_HEIGHT - FRAME_CHARACTER_HEIGHT)/2 + 40))
+        {
+            y+=1;
+        } else
+        {
+            y-=1;
+        }
+    } else {
+        // Boss di chuyển lên xuống theo trục y (tọa độ x giữ nguyên)
+        if (y <= 80 || y >= 500)
+        {
+            bossDirection *= -1; // Đảo chiều
+        }
+        y += bossDirection ; // Di chuyển theo trục y từ 50 đến 521
     }
     
 }

@@ -12,12 +12,20 @@ using namespace std;
 // === Khai báo biến toàn cục ===
 std::vector <Point> points;
 std::vector <SDL_Texture*> hp;
+
 std::vector <EnemyObject> enemies;
+EnemyObject boss;
+bool isBossAlive = false;
+bool hasSpawnedBoss = false;
+int bossHP = 3;
+Uint32 bossSpawnTime = 0;
+
 std::vector <SDL_Texture*> skillTexture;
 int score = 0;
 int lastScoreCheckpoint = 0;
 int ultimate = 0;
 bool isMuted = false;
+
 // Cấu trúc để load và liên kết asset với texture
 struct LoadAsset {
     BaseObject* object;
@@ -51,6 +59,7 @@ std::vector <LoadAsset> assets = {
     { &gHorizontal, "assets/cat/horizontal.png", &horizontalTexture},
     { &gEnemyLeft, "assets/ghost/ghost_normal_left.png", &enemyLeftTexture},
     { &gEnemyRight, "assets/ghost/ghost_normal_right.png", &enemyRightTexture},
+    { &gBoss, "assets/ghost/boss.png", &bossTexture},
     { &sSunken, "assets/symbols/sSunken.png", &sunkenSymbolTexture},
     { &sVertical, "assets/symbols/sVertical.png", &verticalSymbolTexture},
     { &sHealth, "assets/symbols/sHealth.png", &healthSymbolTexture},
@@ -61,6 +70,50 @@ std::vector <LoadAsset> assets = {
     { &sEnemyHurtRight, "assets/ghost/ghost_hurt_right.png", &enemyHurtRightTexture},
     { &sEnemyHurtLeft, "assets/ghost/ghost_hurt_left.png", &enemyHurtLeftTexture}
 };
+
+// Spawn Boss
+void spawnBossIfNeeded(int currentScore)
+{
+    if (!isBossAlive && currentScore >= 3000 && currentScore % 3000 == 0)
+    {
+        std::vector<char> bossSkill;
+        char possibleSkills[] = {'-', '|', 'v'};
+        for (int i = 0; i < 12; ++i) {
+            bossSkill.push_back(possibleSkills[rand() % 3]);
+        }
+        int bossX = 20;
+        int bossY = rand() % 500 + 80;
+        boss = EnemyObject(bossX, bossY, bossSkill);
+        boss.isBoss = true;
+        boss.hasCollided = false;
+        bossSpawnTime = SDL_GetTicks();
+        isBossAlive = true;
+        hasSpawnedBoss = true;
+        std::cout << "Boss xuất hiện!" << std::endl;
+    }
+}
+// Handle skill
+void handleSkill(char skill)
+{
+    gPlayer.skill();
+    Mix_PlayChannel(-1, SoundManager::hit, 0);
+    attack(skill, enemies);
+
+    // xử lý boss nếu đang sống
+    if (isBossAlive && !boss.skillQueue.empty() && boss.skillQueue[0] == skill)
+    {
+        boss.isHurt = true;
+        boss.skillQueue.erase(boss.skillQueue.begin());
+        if (boss.skillQueue.empty())
+        {
+            isBossAlive = false;
+            hasSpawnedBoss = false;
+            score += 1000;
+            Mix_PlayChannel(-1, SoundManager::dead, 0);
+            if (hp.size() < 5) hp.push_back(healthSymbolTexture);
+        }
+    }
+}
 
 // Load media
 bool loadMedia()
@@ -285,7 +338,9 @@ int main(int argc, char* argv[])
                         gPlayer.set_clips(HORIZONTAL_ANIMATION_FRAMES);
                         gPlayer.skill();
                         attack('-', enemies);
+                        handleSkill('-');
                         Mix_PlayChannel(-1, SoundManager::hit, 0);
+                        cout << "ĐƯỜNG NGANG" << endl;
                     }
                     else if (isVerticalLine(points))
                     {
@@ -294,6 +349,7 @@ int main(int argc, char* argv[])
                         gPlayer.skill();
                         Mix_PlayChannel(-1, SoundManager::hit, 0);
                         attack('|', enemies);
+                        handleSkill('|');
                         cout << "ĐƯỜNG DỌC" << endl;
                     }
                     else if (isVLine(points))
@@ -302,6 +358,7 @@ int main(int argc, char* argv[])
                         gPlayer.set_clips(SUNKEN_ANIMATION_FRAMES);
                         gPlayer.skill();
                         attack('v', enemies);
+                        handleSkill('v');
                         Mix_PlayChannel(-1, SoundManager::hit, 0);
                         cout << "CHỮ V" << endl;
                     }
@@ -420,7 +477,8 @@ int main(int argc, char* argv[])
 
             // Spawn enemy mới
             spawnEnemy(enemies);
-
+            // Spawn Boss
+            spawnBossIfNeeded(score);
             //Kiểm tra va chạm giữa player và enemy
             for (EnemyObject& enemy : enemies)
             {
@@ -443,6 +501,13 @@ int main(int argc, char* argv[])
                     }
                 }
             }
+            if (isBossAlive && SDL_GetTicks() - bossSpawnTime > 10000) {
+                if (!boss.hasCollided) {
+                    boss.hasCollided = true;
+                    hp.pop_back();
+                    std::cout << "Boss sống quá lâu → Trừ máu" << std::endl;
+                }
+            }
 
             // Check enemy sống chết
             enemyLive(enemies, SoundManager::dead, enemyDieRightTexture, enemyDieLeftTexture, score);
@@ -463,7 +528,9 @@ int main(int argc, char* argv[])
                     enemy.show(enemy.xpos, enemy.ypos, enemyRightTexture, skillTexture, enemyHurtRightTexture, enemyHurtLeftTexture);
                 }
             }
-
+            if (isBossAlive) {
+                boss.show(boss.xpos, boss.ypos, bossTexture, skillTexture, enemyHurtRightTexture, enemyHurtLeftTexture);
+            }
             // Render player
             gPlayer.show();
 
@@ -525,6 +592,9 @@ int main(int argc, char* argv[])
                 isGameOver = false;
                 isPaused = false;
                 points.clear();
+                isBossAlive = false;
+                hasSpawnedBoss = false;
+                boss.skillQueue.clear();
                 gPlayer.setTexture(waitingTexture);
                 gPlayer.set_clips(WAITING_ANIMATION_FRAMES);
                 Mix_PlayMusic(SoundManager::bgm, -1);

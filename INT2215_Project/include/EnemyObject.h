@@ -9,6 +9,7 @@ class EnemyObject : public BaseObject
 {
 public:
     // Khởi tạo và hủy
+    EnemyObject();
     EnemyObject(int x0, int y0, std ::vector<char> skills);
     ~EnemyObject();
     // Thuộc tính trạng thái quái
@@ -18,6 +19,7 @@ public:
     bool isDying;
     bool hasCollided;
     bool isHurt;
+    bool isBoss;
     // Hiển thị quái và kỹ năng tương ứng
     void show(int& x, int& y, SDL_Texture* enemyTexture, std::vector <SDL_Texture*> skillTexture, SDL_Texture* hurtRTex, SDL_Texture* hurtLTex);
 private :
