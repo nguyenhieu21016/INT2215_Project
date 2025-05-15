@@ -30,6 +30,7 @@
 <p align="center">
   <img src="INT2215_Project/preview/boss.png" width="300">
 </p>
+
 - **Xuất hiện liên tục**: Quái vật sẽ được spawn đều đặn và **ngày càng nhiều** (sau mỗi 60s giảm 100ms, min 1000ms) khi người chơi đạt điểm cao → tăng độ khó theo thời gian.
 - **Cơ chế boss**: Boss xuất hiện sau mỗi 3000 điểm (~30 quái) với lượng máu **gấp đôi**, sau 7s nếu người chơi không giết sẽ bị trừ máu, giết boss sẽ được hồi full máu
 - **Hướng di chuyển trái/phải**: Quái vật có thể xuất hiện từ hai bên màn hình, và hiển thị animation khác nhau tùy hướng 
