@@ -14,7 +14,7 @@
 - **Nền tảng:** PC
 - **Ngôn ngữ**: C++ /  SDL2
 - **Tóm tắt:** Trong Feline Frights, người chơi điều khiển một chú mèo học phép thuật, vẽ các hình dạng (như đường thẳng, chữ V, v.v.) để chiến đấu với các quái vật. Người chơi sẽ vẽ các hình dạng trên màn hình để tiêu diệt các quái vật đang tiến tới, đồng thời tránh để quái vật tấn công mình. Game có độ khó tăng dần (càng ngày sẽ có càng nhiều quái xuất hiện) và không có kết thúc, với mục tiêu là duy trì sống sót càng lâu càng tốt.
-- **Ngưỡng điểm mong muốn:** 9 - 10
+- **Ngưỡng điểm mong muốn:** 9 - 10 - CHẤM NGÀY 15/5/2025 : 9 ĐIỂM
 ## III. Các điểm nổi bật của Feline Frights
 
 ### 1. Kiến trúc hướng đối tượng rõ ràng, dễ mở rộng (Game Structure)
