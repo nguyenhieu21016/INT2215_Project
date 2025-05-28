@@ -56,9 +56,7 @@ Trong game, thay vì bấm nút để tấn công, người chơi phải **vẽ 
 - Game sử dụng hệ thống hoạt ảnh linh hoạt để hiển thị chuyển động và trạng thái của nhân vật chính, đảm bảo phản hồi trực quan mỗi khi người chơi thực hiện hành động - mỗi hành động đều có ảnh động riêng (vẽ skill, trúng đòn, đợi…).
 ### 5. Hệ thống bổ trợ (Additional System)
 #### 5.1. Hệ thống âm thanh đầy đủ, có tùy chỉnh
-<p align="center">
-  <img src="INT2215_Project/preview/sound.png" width="200">
-</p>
+
 
 
 - Sử dụng **SDL_mixer** để quản lý toàn bộ âm thanh trong game: nhạc nền, âm hiệu khi vẽ, chọn menu, tấn công, pause, bị thương, v.v.
